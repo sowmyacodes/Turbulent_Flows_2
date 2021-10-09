@@ -23,7 +23,7 @@ k(1) = 10e-4;
 w = MatRANS.omega(end,:);
 Uf = MatRANS.Uf(end);
 L = beta^(-1/4).*(sqrt(k)./w);
-vprime = 1./(k.*3);
+vprime = k./3;
 RND_mean = 0;
 RND_std_dev = 1;
 
@@ -47,7 +47,7 @@ dT = L_nd./vrms;
 
 Np = 100; % number of particles
 N_it = 5000; %number of iterations for break
-NT = 500; %time
+NT = 50; %time
 P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
 
 % % % % % % Vertical and horizontal positions
@@ -144,26 +144,23 @@ for jj = 1 : Np
     yline(y_bottom);
     yline(y_top);
 
-    figure(2)
-    plot(Xp(end-1), Yp(end-1),'o');
-    xlabel('X position');
-    ylabel('Y position');
-    hold on
-    yline(y_bottom);
-    yline(y_top);
-
-
-    figure(3)
-    plot(Xp,Tp);
-    hold on
-    xlabel('Mean X position')
-    ylabel('Time')
+    
     
 end
 
 
 %% Analyse results
 
+figure(2)
+plot(Xp(end-1), Yp(end-1),'o');
+xlabel('X position');
+ylabel('Y position');
+hold on
+yline(y_bottom);
+yline(y_top);
 
-
-
+figure(3)
+plot(X_mean,Tp);
+hold on
+xlabel('Mean X position')
+ylabel('Time')
