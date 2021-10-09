@@ -1,0 +1,28 @@
+In these cases the model simulates the wave boundary layer beneath an
+ oscillatory (sinusoidal) free stream flow.  Both a hydraulically 
+smooth and rough case are considered, corresponding respectively to 
+test 10 and test 13 of Jensen et al. (1989).  Comparisons with 
+measurements are made for the velocity profiles, turbulent kinetic
+ energy profiles, and Reynolds stress profiles at various phases.
+  Additionally, comparison with measured friction velocity time series
+are made.
+
+
+
+To run (from within either sub-directory):
+
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+
+Reference
+
+
+
+Jensen, B.L., Sumer, B.M. and Fredsoe, J. (1989) Turbulent oscillatory 
+boundary layers at high Reynolds numbers. J. Fluid Mech. 206, 265-297.

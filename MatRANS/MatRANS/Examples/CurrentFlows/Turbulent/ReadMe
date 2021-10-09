@@ -1,0 +1,41 @@
+Standard turbulence model:
+These cases (Smooth and Rough directories) use the model 
+to simulate the development of steady currents on both hydraulically 
+smooth and rough conditions, using the standard k-omega model.  Computed velocity and turbulent kinetic 
+energy profiles are compared to measurements from Fuhrman et al. (2010) 
+for the same conditions.
+
+ 
+
+To run (both cases):
+>>MatRANS;
+
+>>Compare;
+
+Transitional turbulence model:
+Additionally, in the SmoothTransitional and RoughTransitional directories, these cases are re-considered using the transitional turbulence model
+ (i.e. set turb=2) of Wilcox (2006, pp. 200-211).  
+
+
+
+To run (both cases):
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+References
+
+
+
+Fuhrman, D.R., Dixen, M., and Jacobsen, J.G. (2010)
+ Physically-consistent wall boundary conditions for the k-omega
+turbulence model. J. Hydraulic Res. 48, 793-800.
+
+
+
+Wilcox, D.C. (2006) Turbulence modeling for CFD, Third ed. 
+DCW Industries, La Canada, California.

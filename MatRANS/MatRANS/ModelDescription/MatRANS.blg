@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: MatRANS.aux
+The style file: jfm.bst
+Database file #1: /home/drfu/Latex/Papers/BibTeX/References.bib
+Warning--entry type for "SchloerSterner2009" isn't style-file defined
+--line 3763 of file /home/drfu/Latex/Papers/BibTeX/References.bib
+You've used 23 entries,
+            2793 wiz_defined-function locations,
+            805 strings with 8361 characters,
+and the built_in function-call counts, 10835 in all, are:
+= -- 1082
+> -- 449
+< -- 20
++ -- 178
+- -- 150
+* -- 952
+:= -- 1939
+add.period$ -- 47
+call.type$ -- 23
+change.case$ -- 167
+chr.to.int$ -- 31
+cite$ -- 23
+duplicate$ -- 488
+empty$ -- 821
+format.name$ -- 191
+if$ -- 2165
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 25
+newline$ -- 73
+num.names$ -- 92
+pop$ -- 142
+preamble$ -- 1
+purify$ -- 142
+quote$ -- 0
+skip$ -- 291
+stack$ -- 0
+substring$ -- 678
+swap$ -- 109
+text.length$ -- 2
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 195
+warning$ -- 0
+while$ -- 103
+width$ -- 0
+write$ -- 253
+(There was 1 warning)

@@ -1,0 +1,40 @@
+Welcome to the MatRANS model, for simulating simple one-dimensional vertical (1DV) boundary layer flows.  The model solves Reynolds-averaged Navier-Stokes equations, coupled with k-omega turbulence closure, coupled with bed and suspended load sediment transport.
+
+
+Set up cases for the book:
+
+Sumer, B.M. and Fuhrman, D.R. (2020) Turbulence in Coastal and Civil Engineering. World Scientific. DOI: 10.1142/10829 
+
+can be found beneath the MatRANS/TurbulenceBook/ directory.
+
+
+The remaining MatRANS file structure is organized as follows:
+
+MatRANS/src: Contains source code for current release.
+MatRANS/src_old: Contains source code for previous releases.
+MatRANS/Examples: Contains over 20 set up examples for simulating steady and wave boundary layers.
+MatRANS/ModelDescription: Contains a LaTeX document describing the model (This only describes the original implementation, and does not describe extensions to include the transitional turbulence model and sediment mixtures).
+MatRANS/Courses: Contains files for simulations utilized in courses at DTU.
+MatRANS/Work: Intended as a working directory for new users to organize new applications.
+
+Brief description of versions: 
+1.0: Basic turbulence and sediment transport models (Fuhrman et al. 2013)
+2.0: Extended to include (1) transitional turbulence model (Williams and Fuhrman 2016) and (2) sediment mixtures (Caliskan and Fuhrman 2017)
+2.1: Bug fix in transitional model, with updated setup for the relevant Examples (steady currents on smooth/rough beds as well as solitary wave boundary layers).
+
+This is version 2.1.
+
+
+Have fun!
+
+David R. Fuhrman
+May 21, 2019
+
+
+References
+
+Caliskan, U. and Fuhrman, D.R. (2017) RANS-based simulation of wave-induced sheet-flow transport of graded sediments. Coast. Eng. 121, 90-102.
+
+Fuhrman, D.R., Schløer, S. and Sterner, J. (2013) RANS-based simulation of turbulent wave boundary layer and sheet-flow sediment transport processes. Coast. Eng. 73, 151-166.
+
+Williams, I.A. and Fuhrman, D.R. (2016) Numerical simulation of tsunami-scale wave boundary layers. Coast. Eng. 110, 17-31.

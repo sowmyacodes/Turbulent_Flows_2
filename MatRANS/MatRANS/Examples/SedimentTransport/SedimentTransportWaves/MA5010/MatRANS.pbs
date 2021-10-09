@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# embedded options to qsub - start with #PBS
+# Run name
+#PBS -N MA5010
+#
+# Output filename
+#PBS -o MatRANS.log
+#
+# Error filename
+#PBS -e MatRANS.err
+
+# Mail to user
+#PBS -m ae
+#PBS -M drf@mek.dtu.dk
+
+# ask for cores on one node - it's a SMP job
+# we can later refer to this setting through PBS_NUM_PPN
+#PBS -l nodes=1:ppn=1
+
+# -- run in the current working (submission) directory --
+cd $PBS_O_WORKDIR
+
+# here follow the commands you want to execute
+#
+/bin/echo 
+
+# Display start time
+echo Run started at: `date`
+
+# Remove existing output
+rm -rf out_MatRANS.mat
+rm -rf MatRANS.log
+rm -rf MatRANS.err
+rm -rf *~
+
+
+# Run Matlab script
+matlab -nodesktop -nosplash - nojvm -r "addpath ~/MatRANS/src; MatRANS;"
+echo Current time is: `date`
+
+# Clean up
+rm -rf *~;
+
+# Display end time
+echo Run completed at: `date`

@@ -1,0 +1,11 @@
+This directory contains the current MatRANS source code.
+
+main_MatRANS.m is the main script, which handles pre-processing, job execution, post-processing, and saving results to a .mat file.
+
+ddt_MatRANS.m is a function, which evaluates the right-hand-side (time derivatives) of the governing PDEs.
+
+GlobalVars.m is where global variables are declared.
+
+startup_MatRANS.m is a script where users may optionally set their installation directory.  Execution of this script will add MatRANS/src to Matlab's path.
+
+PostProcess.m is a script which loads a saved .mat file from a simulation, and performs desired plotting of time series, as well as animation of results (e.g. velocity profiles, etc.).

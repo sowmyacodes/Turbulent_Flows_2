@@ -1,0 +1,24 @@
+This case simulates a laminar wave boundary layer (turbulence model
+ switched off), buth with active convective terms to promote boundary layer streaming.  The resulting
+ period-averaged velocity profile is then compared against the
+theoretical solution of Longuet-Higgins (1958).  The period-averaged
+ dimensionless bed shear stress is also checked, which compares very
+ well against the expected theoretical value (1/4).
+
+ 
+
+To run:
+
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+Reference
+
+
+
+Longuet-Higgins, M.S. (1958) The mechanics of the boundary-layer near the bottom in a progressive wave.  Appendix to Russell, R.C.H. and Osorio, J.D.C.: An experimental investigation of drift profiles in a closed channel. Proc. Sixth Int. Conf. Coast. Eng., Miami, Florida, pp. 184-193.

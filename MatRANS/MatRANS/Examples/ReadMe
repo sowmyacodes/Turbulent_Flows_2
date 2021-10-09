@@ -1,0 +1,41 @@
+In this directory you will find several example set up cases, which test essentially all of the features developed within this model.  To run them, be sure that the MatRANS/src (source code) directory is in your Matlab path e.g.:
+
+>> addpath path/to/my/MatRANS/src
+
+or alternatively set this up in MatRANS/src/startup_MatRANS.m, and simply execute this script.
+
+
+The (approx. 22 set up) cases are logically organized as follows:
+
+In /CurrentFlows (5 tutorial examples):
+/Laminar: Tests simulated laminar current profile against theory (turbulence model off)
+/Turbulent/Smooth: Tests hydraulically smooth steady current versus data (standard k-omega model)
+/Turbulent/Rough: Tests hydraulically rough steady current versus data (standard k-omega model)
+/Turbulent/SmoothTransitional: Re-tests smooth case, but with transitional k-omega model
+/Turbulent/RoughTransitional: Re-tests rough case, but with transitional k-omega model
+
+In /WaveBoundaryLayers (10 tutorial examples):
+/LaminarWBL: Tests laminar oscillatory boundary layer simulation against theory
+/TurbulentWBL: Tests (rough and smooth) oscillatory turbulent wave boundary layer results against data
+/StreamingLaminar: Test laminar progressive wave boundary layer streaming against theory
+/StreamingTurbulent/Symmetric: Tests progressive turbulent wave boundary layer streaming against independent numerical results
+/StreamingTurbulent/Asymmetric: Similarly, tests and demonstrates turbulence-induced streaming beneath velocity-skewed wave signal against independent numerical results
+/ConvergingDivergingLaminar: Tests converging-diverging oscillatory flow against laminar theory
+/ConvergingDivergingTurbulent: Tests converging-diverging oscillatory flow against data
+/SolitaryWaveBoundaryLayer: Demonstrates/tests transitional turbulence model against theory/data for a solitary wave boundary layer flow
+/TsunamiMercator: Demonstrates an application where a digital velocity time series (in this case from the Indian Ocean 2004 tsunami) is used to drive a time-varying boundary layer flow.  Slight modifications also include use of N-wave and superipmosed sech()^2 wave shapes.
+
+In /WavePlusCurrent (3 tutorial examples):
+These cases demonstrate simulation of combined wave-plus-current boundary layer, as well as with the pure current or pure wave simulated separately.  The combined result is compared with a turbulent theory.
+
+In /SedimentTransport (4 tutorial examples)
+/VanoniDistribution: Tests computed suspended sediment concentration profile against the Vanoni distribution in a turbulent steady flow
+/SedimentTransportWaves: Tests computed sediment fluxes against measuremenets (two cases, involving fine and medium sands)
+/GradedSedimentTransportWaves: Demonstrates additional use of graded sediment (multiple grain sizes) transport beneath velocity-skewed free stream flow.
+
+Each tutorial also comes with its own ReadMe file, so please consult these for further details.
+
+Have fun!
+
+David R. Fuhrman
+October 26, 2016

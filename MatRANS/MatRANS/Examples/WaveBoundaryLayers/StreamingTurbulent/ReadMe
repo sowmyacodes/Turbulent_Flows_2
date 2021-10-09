@@ -1,0 +1,31 @@
+Two cases involving turbulent wave boundary layer streaming (hence
+active convective terms) are considered.  These are based on two of 
+the conditions considered by Holmedal and Myrhaug (2009): (1)
+ period-averaged streaming beneath a "Symmetric" (i.e. sinusoidal) wave
+ velocity signal, and (2) period-averaged streaming beneath an
+ "Asymmetric" (i.e. 2nd-order Stokes) wave velocity signal.  The
+ comparisons animate the period-averaged velocity profile through time,
+and the streaming velocity values above the boundary layer are
+ compared with the results of Holmedal and Myrhaug (2009), based on
+ their independent k-epsilon turbulence closure.
+
+  
+
+To run (from either sub-directory):
+
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+
+Reference
+
+
+
+Holmedal, L.E. and Myrhaug, D. (2009) Wave-induced steady streaming,
+mass transport and net sediment transport in rough turbulent ocean
+bottom boundary layers. Cont. Shelf Res. 29, 911-926.

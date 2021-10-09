@@ -1,0 +1,14 @@
+This case computes two successive periods of a laminar wave boundary
+ layer, using the laminar theoretical solution as the initial condition. 
+ As the case is laminar, the turbulence model is switched off (turb=0).  Results 
+for the velocity profiles are compared against the theoretical
+solution for numerous phases.  The resulting time series of the bed shear
+ stress is additionally compared with the theoretical solution.
+
+
+
+To run:
+
+>>MatRANS;
+
+>>Compare;

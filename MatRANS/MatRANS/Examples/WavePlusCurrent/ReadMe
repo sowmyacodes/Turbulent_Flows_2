@@ -1,0 +1,33 @@
+This case considers combined wave-plus-current flow.  It is designed
+to repeat the conditions considered in Example 3.1 of Fredsoe and
+Deigaard (1992, p. 61).  First, a pure current, driven by a constant
+pressure gradient, is allowed to develop over some time.  The results 
+at the end of the pure-current simulation are then loaded as initial
+ conditions for a sub-sequent combined wave-plus-current simulation.
+  In the comparison, the development of the period-averaged current 
+velocity is animated through time, with the end results compared 
+against the analytical expressions (both outside and inside the wave
+boundary layer) for wave-plus-current flow provided by Fredsoe and
+Deigaard (1992).  The results clearly demonstrate e.g. the effect of 
+the wave-induced roughness on the current.  The expected logarithmic 
+profile for the pure current conditions is also plotted, for 
+comparison.
+
+
+
+To run (Note that this example may take several hours to run!):
+
+
+>>runAll;
+
+>>Compare;
+
+
+
+
+Reference
+
+
+
+Fredsoe, J. and Deigaard, R. (1992) Mechanics of Coastal Sediment
+Transport. World Scientific.
