@@ -46,7 +46,7 @@ dT = L_nd./vrms;
 
 %% Parameters and Arrays for storing data
 
-Np = 500; % number of particles
+Np = 200; % number of particles
 N_it = 5000; %number of iterations for break
 
 NT = 25; %time
