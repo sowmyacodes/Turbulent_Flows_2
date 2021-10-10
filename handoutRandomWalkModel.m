@@ -23,9 +23,9 @@ k(1) = 10e-4;
 w = MatRANS.omega(end,:);
 Uf = MatRANS.Uf(end);
 L = beta^(-1/4).*(sqrt(k)./w);
-vprime = 1./(3.*k);
-%vprime = k./3;
 
+% vprime = 1./(k.*3);
+vprime = k./3;
 RND_mean = 0;
 RND_std_dev = 1;
 
@@ -49,7 +49,11 @@ dT = L_nd./vrms;
 Np = 100; % number of particles
 N_it = 50000; %number of iterations for break
 NT = 25; %time
+
 P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
+
+
+%do not prealloacte because then you cant see the final position
 
 % % % % % % Vertical and horizontal positions
 % % % % % Yp  = zeros(N_it,1);
