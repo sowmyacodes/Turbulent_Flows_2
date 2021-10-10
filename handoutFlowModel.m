@@ -2,7 +2,7 @@
 
 % Clear workspace, figures, and command line
 clear all; close all; clc;
-addpath ./MatRANS/MatRANS/src; % Points to MatRANS source code
+addpath ./MatRANS/src; % Points to MatRANS source code
 GlobalVars; % Declare global variables
 
 % MODEL INPUT ---------------------------------------------------------------
