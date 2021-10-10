@@ -50,7 +50,11 @@ Np = 200; % number of particles
 N_it = 5000; %number of iterations for break
 
 NT = 25; %time
+
 P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
+
+
+%do not prealloacte because then you cant see the final position
 
 % % % % % % Vertical and horizontal positions
 % % % % % Yp  = zeros(N_it,1);
