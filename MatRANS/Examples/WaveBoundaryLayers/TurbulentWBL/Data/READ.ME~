@@ -1,0 +1,58 @@
+  ***********************************************************
+  *                                                         *
+  *  TURBULENT OSCILLATORY BOUNDARY LAYERS OVER SMOOTH AND  *
+  *                     ROUGH WALLS                         *
+  *                                                         *
+  *          B.L. JENSEN  B.M. SUMER  J. FREDS›E            *
+  *  INSTITUTE OF HYDRODYNAMICS AND HYDRAULIC ENGINEERING   *
+  *            TECHNICAL UNIVERSITY OF DENMARK              *
+  *                                                         *
+  ***********************************************************
+
+  THIS DISC CONTAINS DATA OBTAINED WITH LDA AND HOT-FILM MEASUREMENTS
+  REPORTED IN THE JFM-PAPER "TURBULENT OSCILLATORY BOUNDARY LAYERS
+  AT HIGH RE-NUMBERS", J. FLUID MECH. (1989) VOL 206, PP 265 - 297.
+
+  THE SAME DATA IS REPORTED IN THE PH-D THEISIS BY B.L. JENSEN:
+  "EXPERIMENTAL INVESTIGATION OF TURBULENT OSCILLATORY BOUNDARY LAYERS"
+  (1989), SERIES PAPER NO. 45 ,INST. HYDRODYN. HYDRAULIC ENGRG.,
+  TECHN. UNIV. DENMARK BUILD.115 DK-2800 LYNGBY, DENMARK.
+  PHONE: + 45 42 88 42 00  OR  + 45 42 88 22 22
+  FAX  : + 45 42 93 28 60
+
+  THE DATA IS ORGANIZED IN THE FOLLOWING MANNER:
+
+  <TYPE><TESTNUMBER><COMPONENT>.DAT
+
+  FOR FLOWCONDITIONS CORRESPONDING TO THE DIFFERENT TESTNUMBERS PLEASE
+  REFER TO ONE OF THE TWO ABOVEMENTIONED REFERENCES
+
+  THE KEYS FOT THE DIFFERENT TYPES ARE:
+  <P> = profiles of statistical values with 15 degr. intervals
+        the first coloum contains the y-positions and the next
+        13 coloums contains the values from 0 degr. to 180 degr.
+  <T> = timeseries of statistical values for different y/a -values
+        organized in coloums
+        The first coloums contains the phase-values
+        The next 5 or 6 coloums contains the values corresponding
+        to the following y/a-values
+         Test 10 : y/a = 0.0003 , 0.001 , 0.004 , 0.012, 0.026 , 0.038
+         Test 13 : y/a = 0.0006 , 0.0018 , 0.0058 , 0.017 , 0.038
+
+  THE KEY FOR THE DIFFERENT COMPONENTS IS:
+  (REYUV  = REYNOLDS STRESSES)
+  (MEAUU  = MEAN IN THE STREAMWISE DIRECTION)
+  (RMSUU  = RMS IN THE STREAMWISE DIRECTION)
+  (RMSVV  = RMS IN THE VERTICAL DIRECTION.(NORMAL TO THE WALL))
+
+
+ (THE DATA IN THE PROFILE-FILES ARE LISTED IN THE THEISIS)                                                                        00610000
+
+    The Files TAURMS and TAUMEAN contains the timeseries of the
+    shearstress measurements (rms and mean respectively)
+    The first coloums contains the phase-values and the next 9
+    coloums corresponds to the following testnumbers:
+    1, 2, 3, 4, 5, 7, 8, 9, 10 as can be seen from the testmatrix
+    in the paper
+
+      GOOD LUCK

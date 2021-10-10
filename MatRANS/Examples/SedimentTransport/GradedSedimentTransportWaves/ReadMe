@@ -1,0 +1,24 @@
+A single case is presented, demonstrating a simulation of case K2 of Hassan & Ribberink (2005) involving the sheet flow of graded sediment beneath a velocity-skewed free stream wave signal.  This particular case involves only two weight fractions, though for demonstration purposes it is set up with four weight fractions, two of which happen to be zero (the model can handle N weight fractions, in a similar fashion).
+
+  This case corresponds to one of a number of similar runs made by Caliskan & Fuhrman (2017), who introduced the graded sediment transport feature within the MatRANS model.  The Compare.m script calculates time series of the Shields paramter, bed load, and suspended load transport rate, as well as the suspended sediment concentration distribution beneath the peak flow.  Additionally, the computed period-averaged transport rates are compared with those measured by Hassan & Ribberink (2005) for each weight fraction.
+
+To run:
+
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+
+References
+
+
+
+Hassan, W.N. & Ribberink, J.S. (2005) Transport processes of uniform and mixed sands in oscillatory sheet flow. Coast. Eng. 52, 745-770.
+
+
+
+Caliskan, U. and Fuhrman, D.R. 2017 RANS-based simulation of wave-induced sheet-flow transport of graded sediments. Coast. Eng. 121, 90-102.

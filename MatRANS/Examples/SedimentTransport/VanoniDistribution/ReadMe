@@ -1,0 +1,14 @@
+This case uses a constant pressure gradient to develop a 
+rough-turbulent steady current, starting from motionless initial
+ conditions.  Results are compared with a standard logarithmic velocity
+profile, the parabolic eddy viscosity profile (matches computed
+ results for the lower half of the channel), and the Vanoni 
+distribution for the suspended sediment concentration profile.
+
+
+
+To run:
+
+>>MatRANS;
+
+>>Compare;

@@ -1,0 +1,24 @@
+This case considers an oscillatory wave boundary layer in a
+convergent-divergent tunnel, as studied experimentally by Sumer et
+al. (1993).  The case considered corresponds to their Test 16
+conditions.  Upon completing the simulation, the period-averaged
+velocity profile is animated through time until a steady state is
+reached.  The resulting profile is then compared with the
+measurements.  As the simulation only covers the bottom half of the
+tunnel, the computed results are reflected across the top boundary for
+presentation purposes.  Note that this simulation is similar to that
+leading to Figure 8 of Fuhrman et al. (2013).
+
+To run:
+>>MatRANS;
+>>Compare
+
+
+References
+
+Sumer, B.M., Laursen, T.S., and Fredsoe, J. (1993) Wave boundary layer
+in a convergent tunnel. Coast. Eng. 20, 317-342.
+
+Fuhrman, D.R., Schloer, S. and Sterner, J. (2013) RANS-based
+simulation of turbulent wave boundary layer and sheet-flow sediment
+transport processes. Coast. Eng.

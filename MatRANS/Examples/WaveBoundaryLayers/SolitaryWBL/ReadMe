@@ -1,0 +1,27 @@
+This case tests the transitional turbulence model, as implemented in Williams and Fuhrman (2016), but now with the "bug" correction indicated below.  This case compares the resulting bed shear stress from a simulated solitary wave boundary layer against experimental measurements of Sumer et al. (2010), as well as against the laminar theory of Liu et al. (2007).  The Compare.m script additionally animates the temporal evolution of the velocity and turbulent kinetic energy profiles, where there is clearly a transition to turbulence that occurs during the transient flow.
+
+Note:
+In 2018 a bug was found in the transitional model code - the "alpha_star" coefficient was missing in the omega production term. This explains why the Williams and Fuhrman (2016) and Kirca et al. (2016) papers required using the transitional coefficient R_k=3 rather than R_k=6.  This bug is now fixed and this example utilizes the corrected model. Note that this only affects simulations with the transitional model i.e. with turb=2.
+
+To run:
+
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+
+References
+
+Liu, P.L.F. and Orfila, A. (2007) Boundary layer flow and bed shear stress under a solitary wave. J. Fluid Mech. 574, 449-463.
+
+Sumer, B.B., Jensen, P.M., Sorensen, L.B., Fredsoe, J., Liu, P.L.F. and Carstensen, S. (2010) Coherent structures in wave boundary layers. Part 2. Solitary motion. J. Fluid Mech. 646, 207-231.
+
+Williams, I.A. and Fuhrman, D.R. (2016) Numerical simulation of tsunami-scale wave boundary layers. Coast. Eng. 110, 17-31.
+
+Kirca, V. S. O., Sumer, B. M., Steffensen, M.,  Jensen, K. L. and Fuhrman, D. R. (2016) Longitudinal dispersion of heavy particles in an oscillating tunnel and application to wave boundary layers. J. Ocean Eng. Marine Energy 2, 59-83.
+
+

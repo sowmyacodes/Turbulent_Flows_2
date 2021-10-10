@@ -1,0 +1,41 @@
+These cases consider two example simulations involving sediment
+transport beneath velocity-skewed wave signals, including high
+-concentration effects (hindered settling velocities and turbulence 
+damping due to density gradients in the water-sand mixture).  
+Specifically, cases FA5010 and MA5010 from O'Donogue and Wright (2004)
+ are simulated, which respectively involve the sheet-flow transport of 
+fine and medium sand grains in oscillating tunnel conditions.  The 
+computed period-averaged and instanteous suspended sediment flux
+profiles at various phases are compared with measured profiles.  The
+ fine-sand case (FA5010) results in negative (offshore) net sediment
+transport rates due to importance of phase-lag effects, whereas the 
+medium sand case (MA5010) results in positive (onshore) net sediment
+transport rates.  Note that these simulations are the basis for Figure 
+10, 11, and 12a,d in Fuhrman et al. (2013).
+
+
+
+To run (within either sub-directory):
+
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+
+References
+
+
+
+O'Donoghue, T. and Wright, S. (2004) Flow tunnel measurements of
+velocities and sand flux in oscillatory sheet flow for well-sorted and
+graded sands. Coast. Eng. 51, 1163-1184.
+
+
+
+Fuhrman, D.R., Schloer, S. and Sterner, J. (2013) RANS-based
+simulation of turbulent wave boundary layer and sheet-flow sediment
+transport processes. Coast. Eng.

@@ -1,0 +1,26 @@
+A laminar wave boundary layer on a sloping bed is computed
+ i.e. converging-diverging convective acceleration effects are active.  Upon completion, the
+ period-averaged velocity profile is animated, and the computed results
+ are compared against the laminar theoretical solution obtained by 
+Bijker et al. (1974).
+
+
+
+To run:
+
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+
+Reference
+
+
+
+Bijker, E.W., Kalkwijk, J.P.T. & Pieters, T. (1974) Mass transport in
+gravity waves on a sloping bottom.  Proc. 14th International
+Conference on Coastal Engineering, p. 447-465.

@@ -1,0 +1,117 @@
+\begin{thebibliography}{23}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[Abbott \& Minns(1998)]{AbbottMinns1998}
+{\sc Abbott, M.~B. \& Minns, A.~W.} 1998 {\em Computational Hydraulics\/}, 2nd
+  edn. Brookfield USA: Ashgate.
+
+\bibitem[Abreu {\em et~al.\/}(2010)Abreu, Silva, Sancho \&
+  Temperville]{Abreuetal2010}
+{\sc Abreu, T., Silva, P.~A., Sancho, F. \& Temperville, A.} 2010 Analytical
+  approximate wave form for asymmetric waves. {\em Coast. Eng.\/} {\bf 57},
+  656--667.
+
+\bibitem[Einstein(2006)]{Einstein1950}
+{\sc Einstein, H.~A.} 2006 The bed-load function for sediment transportation in
+  open channel flows. {\em Tech. Rep.\/} Techn. Bulletin No. 1026. U.S. Dept.
+  of Agriculture.
+
+\bibitem[Engelund \& Freds{\o}e(1976)]{EngelundFredsoe1976}
+{\sc Engelund, F. \& Freds{\o}e, J.} 1976 A sediment transport model for
+  straight alluvial channels. {\em Nordic Hydrology\/} {\bf 7}, 293--306.
+
+\bibitem[Freds{\o}e \& Deigaard(1992)]{FredsoeDeigaard1992}
+{\sc Freds{\o}e, J. \& Deigaard, R.} 1992 {\em Mechanics of Coastal Sediment
+  Transport\/}. Singapore: World Scientific.
+
+\bibitem[Fuhrman {\em et~al.\/}(2010)Fuhrman, Dixen \&
+  Jacobsen]{Fuhrmanetal2010}
+{\sc Fuhrman, D.~R., Dixen, M. \& Jacobsen, N.~G.} 2010 Physically-consistent
+  wall boundary conditions for the $k$-$\omega$ turbulence model. {\em J.
+  Hydraul. Res.\/} {\bf 48}, 793--800.
+
+\bibitem[Fuhrman {\em et~al.\/}(2009{\natexlab{{\em a\/}}})Fuhrman, Freds{\o}e
+  \& Sumer]{Fuhrmanetal2009a}
+{\sc Fuhrman, D.~R., Freds{\o}e, J. \& Sumer, B.~M.} 2009{\natexlab{{\em a\/}}}
+  Bed slope effects on turbulent wave boundary layers: 1. {Model} validation
+  and quantification of rough-turbulent results. {\em J. Geophys. Res.\/} {\bf
+  114}, C03024.
+
+\bibitem[Fuhrman {\em et~al.\/}(2009{\natexlab{{\em b\/}}})Fuhrman, Freds{\o}e
+  \& Sumer]{Fuhrmanetal2009b}
+{\sc Fuhrman, D.~R., Freds{\o}e, J. \& Sumer, B.~M.} 2009{\natexlab{{\em b\/}}}
+  Bed slope effects on turbulent wave boundary layers: 2. {Comparison} with
+  skewness, asymmetry, and other effects. {\em J. Geophys. Res.\/} {\bf 114},
+  C03025.
+
+\bibitem[Holmedal \& Myrhaug(2009)]{HolmedalMyrhaug2009}
+{\sc Holmedal, L.~E. \& Myrhaug, D.} 2009 Wave-induced steady streaming, mass
+  transport and net sediment transport in rough turbulent ocean bottom boundary
+  layers. {\em Cont. Shelf Res.\/} {\bf 29}, 911--926.
+
+\bibitem[Jensen {\em et~al.\/}(1989)Jensen, Sumer \&
+  Freds{\o}e]{Jensenetal1989}
+{\sc Jensen, B.~L., Sumer, B.~M. \& Freds{\o}e, J.} 1989 Turbulent oscillatory
+  boundary layers at high {Reynolds} numbers. {\em J. Fluid Mech.\/} {\bf 206},
+  265--297.
+
+\bibitem[Longuet-Higgins(1953)]{Longuet-Higgins1953}
+{\sc Longuet-Higgins, M.~S.} 1953 Mass transport in water waves. {\em Phil.
+  Trans. R. Soc. Lond. A\/} {\bf 245}, 535--581.
+
+\bibitem[Meyer-Peter \& M\"uller(1948)]{MeyerPeterMuller1948}
+{\sc Meyer-Peter, E. \& M\"uller, R.} 1948 Formulas for bed-load transport. In
+  {\em Rep. 2nd Meet. Int. Assoc. Hydraul. Struct. Res.\/}, pp. 39--64.
+  Stockholm.
+
+\bibitem[Nielsen(1992)]{Nielsen1992}
+{\sc Nielsen, P.} 1992 {\em Coastal Bottom Boundary Layers and Sediment
+  Transport\/}. Singapore: World Scientific.
+
+\bibitem[O'Donoghue \& Wright(2004)]{ODonoghueWright2004}
+{\sc O'Donoghue, T. \& Wright, S.} 2004 Concentrations in oscillatory sheet
+  flow for well sorted and graded sands. {\em Coast. Eng.\/} {\bf 50},
+  117--138.
+
+\bibitem[Richardson \& Zaki(1954)]{RichardsonZaki1954}
+{\sc Richardson, J.~F. \& Zaki, W.~N.} 1954 Sedimentation and fluidisation,
+  {Part} 1. {\em Trans. Instn. Chem. Engrs.\/} {\bf 32}, 35--53.
+
+\bibitem[Ruessink {\em et~al.\/}(2009)Ruessink, van~den Berg \& van
+  Rijn]{Ruessinketal2009}
+{\sc Ruessink, B.~G., van~den Berg, T. J.~J. \& van Rijn, L.~C.} 2009 Modeling
+  sediment transport beneath skewed asymmetric waves above a plane bed. {\em J.
+  Geophys. Res.\/} {\bf 114}, C11021.
+
+\bibitem[Schl{\o}er \& Sterner(2009)]{SchloerSterner2009}
+{\sc Schl{\o}er, S. \& Sterner, J.} 2009 {Combined Boussinesq-RANS simulation
+  of wave shape, streaming and sediment transport. MSc Thesis, Technical
+  University of Denmark, Kgs.~Lyngby, Denmark}.
+
+\bibitem[Sumer {\em et~al.\/}(2003)Sumer, Chua, Cheng \&
+  Freds{\o}e]{Sumeretal2003}
+{\sc Sumer, B.~M., Chua, L. H.~C., Cheng, N.-S. \& Freds{\o}e, J.} 2003
+  Influence of turbulence on bed load sediment transport. {\em J. Hydraul. Eng.
+  ASCE\/} {\bf 129}, 585--596.
+
+\bibitem[Sumer {\em et~al.\/}(1993)Sumer, Laursen \& Freds{\o}e]{Sumeretal1993}
+{\sc Sumer, B.~M., Laursen, T.~S. \& Freds{\o}e, J.} 1993 Wave boundary layer
+  in a convergent tunnel. {\em Coast. Eng.\/} {\bf 20}, 317--342.
+
+\bibitem[{van Rijn}(1984)]{vanRijn1984}
+{\sc {van Rijn}, L.~C.} 1984 Sediment pickup functions. {\em J. Hydraul.
+  Eng.\/} {\bf 110}, 1494--1502.
+
+\bibitem[Wilcox(2006)]{Wilcox2006}
+{\sc Wilcox, D.~C.} 2006 {\em Turbulence Modeling in CFD\/}, 3rd edn. La
+  Canada, California: DCW Industries, Inc.
+
+\bibitem[Wilcox(2008)]{Wilcox2008}
+{\sc Wilcox, D.~C.} 2008 Formulation of the $k$-$\omega$ turbulence model
+  revisited. {\em AIAA J.\/} {\bf 46}, 2823--2838.
+
+\bibitem[Zyserman \& Freds{\o}e(1994)]{ZysermanFredsoe1994}
+{\sc Zyserman, J.~A. \& Freds{\o}e, J.} 1994 Data analysis of bed concentration
+  of suspended sediment. {\em J. Hydraul. Eng.\/} {\bf 120}, 1021--1042.
+
+\end{thebibliography}

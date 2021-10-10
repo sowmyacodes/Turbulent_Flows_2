@@ -1,0 +1,42 @@
+This case considers a turbulent boundary layer simulation based on 
+the Indian Ocean tsunami from December 26, 2004.  For this purpose 
+depth measurements made by a depth-finder on Thomas Siffer's yacht 
+Mercator (see e.g Madsen and Fuhrman 2008, p. 216) are digitized,
+and converted to velocities (based on shallow-water scaling).  This 
+is done using scripts contained within the /Data subfolder.  These 
+velocities (and corresponding accelerations) are then used to drive 
+the flow within the model.  Hence this case serves as an example on 
+how to drive the model based on a user-defined signal.  In the
+comparison, the resulting flow and turbulence profiles are animated.  
+Additionally, the computed velocity time series from the top of the 
+model domain is compared with that based on the converted original 
+digitized data.  
+
+
+In addition to the set up provided, changing to iwave=4 will simulate this case with the velocity approximated by an N-wave signal, based on that used by Madsen and Schaffer (2010).  Similarly, changing to iwave=5 will simulate this case with the signal approximated via a superposition of three sech()^2 signals, essentially as proposed by Chan and Liu (2012).  Both options were utilized in MatRANS simulation of tsunami wave boundary layers by Williams and Fuhrman (2016).
+
+
+To run:
+
+
+>>MatRANS;
+
+>>Compare;
+
+
+
+
+
+References
+
+
+
+Chan, I.-C. and Liu, P.L.-F. 2012 On the runup of long waves on a plane beach. J. Geophys. Res. 117, C08006.
+
+
+Madsen, P.A. and Fuhrman, D.R. 2008 Run-up of tsunamis and long waves 
+in terms of surf-similarity. Coast. Eng. 55, 209-223.
+
+Madsen, P.A. and Schaffer, H.A. 2010 Analytical solutions for tsunami runup on a plane beach: single waves, N-waves and transient waves. J. Fluid Mech. 645, 27-57.
+
+Williams, I.A. and Fuhrman, D.R. 2016 Numerical simulation of tsunami-scale wave boundary layers.  Coast. Eng. 110, 17-31.

@@ -1,0 +1,415 @@
+% Define the document class
+\documentclass[12pt]{article}
+\bibliographystyle{jfm}
+
+% Lines defining margin
+%\topmargin -13mm
+%\textwidth 163mm % A4 paper
+%\textheight 245mm % 245
+%\oddsidemargin 0mm
+%\pagestyle{empty}
+
+% Additional packages
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage[mathscr]{eucal}
+%\usepackage{algorithmic}
+%\usepackage{algorithm}
+\usepackage{natbib}
+%\usepackage{textcomp}
+%\usepackage{scriptsize}
+
+% New commands
+%\newcommand{\figscale}{0.7} % Scale to use the figure
+\newcommand{\superscript}[1]{\ensuremath{^{#1}}} % Used to put superscripts in text
+\newcommand{\Matlab}{{\sc Matlab}\superscript{\scriptsize\textregistered}} % Prints Matlab using small caps font and registered symbol
+\newcommand{\Mathematica}{{{\it Mathematica}\texttrademark}} 
+\newcommand{\ie}{{\it i.e.\ }}
+\newcommand{\eg}{{\it e.g.\ }}
+\newcommand{\figpath}{/home/drf/Figures} % General path to figures
+\newcommand{\bibpath}{/home/drfu/Latex/Papers/BibTeX} % Path to references                               
+
+\begin{document}
+
+% Heading information
+\title{A Matlab-based $k$-$\omega$ turbulence model for boundary layer
+  and sediment transport simulations}
+\author{David R. Fuhrman}
+\date{\today}
+\maketitle
+%\thispagestyle{empty}
+
+%\begin{abstract}
+%  \noindent This is the abstract.
+%\end{abstract}
+
+
+\section{Introduction}
+
+This note describes a Matlab-based implementation solving the
+horizontal component of the incompressible Navier-Stokes equations,
+combined with the two-equation $k$-$\omega$ turbulence closure model
+of \cite{Wilcox2006,Wilcox2008}.  The hydrodynamic model is
+additionally coupled with a gradient diffusion model for suspended
+sediment calculations.  Bed load sediment transport can also be
+calcuated using various bed load formulae.  The model is intended to
+be applicable for simple steady current and oscillatory wave boundary
+layer flows, including combined wave-current simulations.  It was
+originally developed within the MSc project of
+\cite{SchloerSterner2009}, which was supervised by the present author,
+who has since made additional modifications to the code.  
+
+By utilizing the Matlab environment, it is hoped that the code will be
+easily accessible for students studying turbulence and/or sediment
+transport processes, and that it might be useful for both educational
+and research purposes.
+
+
+\section{Model Description}
+\label{sec:ModelDescription}
+
+\subsection{Hydrodynamic and turbulence model}
+
+The model solves simplified versions of the horizontal component of
+the incompressible Reynolds-averaged Navier-Stokes (RANS) equations,
+combined with the two-equation $k$-$\omega$ turbulence closure model
+of \cite{Wilcox2006}.  The considered RANS equation reads:
+%
+\begin{equation}
+\frac{\partial u}{\partial t} = 
+-\frac{1}{\rho}\frac{\partial p}{\partial x} % Pressure gradient
++ \nu\frac{\partial^2 u}{\partial y^2} % Viscous term
++ \frac{\partial}{\partial y}\left(\nu_T \frac{\partial u}{\partial
+    y}\right) % Reynolds stress
+-\underline{
+ \left( u\frac{\partial u}{\partial x} + v\frac{\partial u}{\partial
+    y} \right) % Convective acceleration
+- \frac{2}{3}\frac{\partial k}{\partial x}
+}.
+\label{eqn:u}
+\end{equation}
+%
+The turbulence model consists of two respective transport equations
+for the turbulent kinetic energy (per unit mass)
+$k=1/2(\overline{u^{\prime2}} + \overline{v^{\prime2}} +
+\overline{w^{\prime2}})$, where the prime superscripted variables
+represent turbulent velocity fluctuations, as well as the specific
+dissipation rate $\omega$:
+%
+\begin{eqnarray}
+\frac{\partial k}{\partial t} & = &
+\nu_T\left(\frac{\partial u}{\partial y}\frac{\partial u}{\partial y}\right)
+- \beta^* k \omega 
++ \frac{\partial}{\partial y}\left[
+\left(\nu + \sigma^*\frac{k}{\omega} \right) \frac{\partial k}{\partial
+y}  \right]
+\nonumber
+\\
+&&-\underline{
+ \left( u\frac{\partial k}{\partial x} + v\frac{\partial k}{\partial
+    y} \right)
+}-\frac{\nu_T}{\sigma_p}N^2,
+\label{eqn:k}
+\end{eqnarray}
+%
+\begin{eqnarray}
+\frac{\partial \omega}{\partial t} & = &
+\alpha\frac{\omega}{k}\nu_T\left(\frac{\partial u}{\partial y}\frac{\partial u}{\partial y}\right)
+- \beta \omega^2
++ \frac{\sigma_d}{\omega}\frac{\partial k}{\partial y}\frac{\partial\omega}{\partial y}
++ \frac{\partial}{\partial y}\left[
+\left(\nu + \sigma\frac{k}{\omega} \right) \frac{\partial\omega}{\partial
+y}  \right]
+\nonumber
+\\
+&&-\underline{
+ \left( u\frac{\partial\omega}{\partial x} + v\frac{\partial\omega}{\partial
+    y} \right)
+}-c_{e\epsilon}N^2.
+\label{eqn:omega}
+\end{eqnarray}
+%
+The eddy viscosity is defined by
+%
+\begin{equation}
+\nu_T = \frac{k}{\tilde{\omega}},
+\hspace{1cm}
+\tilde{\omega} = \max \left\{\omega, C_{lim}\frac{\left|\partial
+      u/\partial y \right|}{\sqrt{\beta^*}}\right\},
+\label{eqn:nuT}
+\end{equation}
+%
+where $C_{lim}=7/8$.  In
+(\ref{eqn:omega})
+%
+\begin{equation}
+\sigma_d = \mathscr{H}\left\{\frac{\partial k}{\partial
+      x_j}\frac{\partial \omega}{\partial x_j}\right\}\sigma_{do},
+\end{equation}
+%
+where $\mathscr{H}\left\{\cdot\right\}$ is the Heaviside step
+function, taking a value of zero when the argument is negative, and a
+value of unity otherwise.  The model tuning coefficients suggested by
+\cite{Wilcox2006} are: $\alpha=13/25$, $\beta=\beta_0 f_\beta$,
+$\beta_0=0.0708$, $\beta^*=9/100$, $\sigma=1/2$, $\sigma^*=3/5$,
+$\sigma_{do}=1/8$.  Note that  for two-dimensional flows $f_\beta=1$.
+
+The most important differences between this version of the
+$k$-$\omega$ model and earlier versions created by Wilcox et al.~are
+the addition of a ``cross-diffusion'' term (the term proportional to
+$\sigma_d$ in (\ref{eqn:omega})) and a built-in ``stress-limiter''
+modification (the quantity proportional to $C_{lim}$ in
+(\ref{eqn:nuT})).  The cross-diffusion is added to reduce the model's
+sensitivity to the free stream value of $\omega$, whereas the effect
+of the stress-limiter is most important for compressible flows
+\citep{Wilcox2006}.  The present author has found that the
+stress-limiter can create undesirably large Reynolds number dependence
+for steady boundary layers under hydraulically rough conditions,
+however, hence in these conditions it can be switched off by simply
+setting $C_{lim}=0$ \citep[see][]{Fuhrmanetal2010}, whereby
+the eddy viscosity reduces to $\nu_T=k/\omega$.
+
+In (\ref{eqn:u})--(\ref{eqn:omega}) (and (\ref{eqn:C}), below) the
+underlined terms are of so-called second-order importance.  For wave
+boundary layers the importance of these terms can be shown to scale
+with $a\kappa=U_{1m}/c$, where $a=U_{1m}/\omega_w$ is the amplitude of
+free stream orbital motion (for a sinusoidal velocity variation of
+magnitude $U_{1m}$ with angular frequency $\omega_w$) and
+$\kappa=2\pi/L$ is the wave number ($L$ being the wave length), with
+$c=\omega_w/\kappa$ the wave celerity.  Note that for flow in an
+oscillatory u-tube (having uniformity in the $x$-direction) $\kappa=0$
+(that is $L=\infty$) and the second-order terms drop out entirely.
+Additional third-order terms are neglected in the model, and are not
+described here.
+
+Assuming constant form wave propagation, all $x$-derivatives appearing
+in the second-order terms are actually replaced by time derivatives in
+the model via the relation
+%
+\begin{equation}
+\frac{\partial}{\partial x} = - \frac{1}{c}\frac{\partial}{\partial t}.
+\end{equation}
+%
+This is convenient, as it allows potential effects from $x$-variations
+(\eg boundary layer streaming) to be incorporated, while only
+requiring discretization in the vertical $y$-direction.
+
+The vertical velocity $v$ is approximated by solving the local
+continuity equation
+%
+\begin{equation}
+\frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} 
+\approx -\frac{1}{c}\frac{\partial u^{(1)}}{\partial t} + \frac{\partial v}{\partial y} 
+= 0,
+\label{eqn:cont}
+\end{equation}
+%
+where $\partial u^{(1)}/\partial t$ is the leading-order part of
+$\partial u/\partial t$ from (\ref{eqn:u}).  This is justifiable
+because all terms containing $v$ are already of second-order
+importance.
+
+The above equations are (typically) solved starting from motionless
+initial conditions in a single vertical dimension, subject to the
+following boundary conditions.  The bottom boundary is considered a
+friction wall, and strict no-slip boundary conditions are imposed, \ie all
+velocity variables are set to zero, as well as the turbulent kinetic
+energy $k$.  The bottom boundary condition for $\omega$ is adopted
+from \cite{Wilcox2006}, where
+
+\vspace{-10pt}\begin{equation}
+\omega = \frac{U_f^2}{\nu} S_R,
+\hspace{1cm}
+y=0.
+\end{equation}
+%
+\noindent
+The factor $S_R$ is based on the roughness Reynolds number $k_N^+=k_N
+U_f/\nu$, where $k_N$ is Nikuradse's equivalent sand grain roughness,
+and $U_f=\sqrt{\left|\tau_b\right|/\rho}$ is the instantaneous
+friction velocity, according to
+%
+\begin{eqnarray}
+S_R = 
+\left\{ 
+%\Bigg\{ 
+\begin{array}{ll}
+\left(\frac{200}{k_N^+}\right)^2, & k_N^+ \leq 5,\\
+\frac{K_r}{k_N^+} + \left[\left(\frac{200}{k_N^+}\right)^2 - \frac{K_r}{k_N^+} \right]e^{5-k_N^+}, & k_N^+ > 5,
+\end{array} 
+\right.
+\label{eqn:SR}
+\end{eqnarray}
+%
+where \cite{Wilcox2006} suggests using $K_r=100$.  A frictionless
+rigid lid is imposed at the top boundary, whereby vertical derivatives
+of all variables ($u$, $k$, $\omega$, and $C$) are set to zero.
+
+Note that better agreement with standard law of the wall solutions for
+steady boundary layers under hydraulically rough conditions has been
+found by modifying the rough wall coefficient in (\ref{eqn:SR})
+slightly to $K_r=80$
+\citep[see][]{Fuhrmanetal2010,SchloerSterner2009}.
+
+The last terms in (\ref{eqn:k}) and (\ref{eqn:omega}) are turbulence
+suppression terms, due to potential density gradients in the
+sediment-fluid mixture.  In these terms
+%
+\begin{equation}
+N = \sqrt{-\frac{g}{\rho_m}\frac{\partial\rho_m}{\partial y}}
+\end{equation}
+%
+is the Brunt-Vaisala frequency, and $\rho_m=s\rho c + \rho(1-c)$ is
+the fluid-sediment density.  This term is optional in the model, and
+may be switched off.  The standard closure coefficients on this term
+are $\sigma_p=0.7$ with $c_{3\epsilon}=1$ for $N^2<=0$ and
+$c_{3\epsilon}=0$ for $N^2>0$.
+
+
+\subsection{Sediment transport model}
+
+The above hydrodynamic model is also coupled with a
+turbulent-diffusion equation for the possible simulation of the
+suspended sediment concentration $C$ \citep[see
+\eg][p.~238]{FredsoeDeigaard1992}:
+%
+\begin{equation}
+\frac{\partial C}{\partial t} = 
+w_s \frac{\partial C}{\partial y}
++ \frac{\partial}{\partial y}\left(\epsilon_s \frac{\partial C}{\partial
+    y}\right) % Reynolds stress
+-\underline{
+ \left( u\frac{\partial C}{\partial x} + v\frac{\partial C}{\partial
+    y} \right) % Convective acceleration
+},
+\label{eqn:C}
+\end{equation}
+%
+where $w_s$ is the settling velocity, and $\epsilon_s=\beta_s\nu_T+\nu$ is the
+diffusion coefficient, where commonly $\beta_s=1$ is used.  The
+evaluation of the various terms in this equation is the same as
+described above.
+
+Regarding the bottom boundary condition for the suspended sediment
+concentration $C$, a number of options are provided in the model,
+which will not be described in detail here.  The implemented options
+include the reference concentration methods of \cite{EngelundFredsoe1976},
+\cite{ZysermanFredsoe1994}, and \cite{ODonoghueWright2004}, as well as
+the pickup function of \cite{vanRijn1984}.
+
+Bedload sediment transport is also calculated from the bed shear stress based
+on the widely used \cite{MeyerPeterMuller1948} formula.  Other formulas
+of interest may be easily added, if desired.
+
+The model also incorporates potential effects of a longitudinal slope
+on the critical Shields parameter, as described in
+\cite{FredsoeDeigaard1992}, see their p.~205.  The specified slope is
+that of the bottom, hence if it is positive it will increase the
+critical Shields parameter (\ie make sediment more difficult to
+transport) when the flow is positive (uphill), while decreasing the
+critical parameter when the flow is negative (downhill).  The
+adjustment is made dynamically, based on the sign of the instantaneous
+bed shear stress.
+%Hence,
+%positive slope values are intended to provide a local situation
+%similar to waves propagating up a beach.
+
+
+
+\subsection{Pressure gradient}
+
+A prescribed pressure gradient in (\ref{eqn:u}) is used to drive the
+flow within the model domain.  To obtain a desired free stream
+velocity signal $U_0$, this can be implemented generally as
+%
+\begin{equation}
+\frac{1}{\rho}\frac{\partial p}{\partial x} =
+\left( \underline{\frac{U_0}{c}}-1 \right)
+\frac{\partial U_0}{\partial t} + P_x,
+\label{eqn:px}
+\end{equation}
+%
+where the underlined term is again of secondary importance \ie it is
+$O(a\kappa)$.  Note that a constant pressure gradient $P_x$ is also
+added at the end, which can be used \eg to drive steady currents or
+within combined wave-current simulations.  For pure wave simulations
+simply set $P_x=0$.  Within the model a free stream velocity having
+the form of a second-order Stokes signal is utilized, defined
+according to
+%
+\begin{equation}
+U_0 = U_{1m}\sin(\omega_w t^\prime) - U_{2m}\cos(2\omega_w t^\prime)
+\label{eqn:U}
+\end{equation}
+%
+\begin{equation}
+\frac{\partial U_0}{\partial t} = 
+U_{1m}\omega_w\cos(\omega_w t^\prime)
++ 2U_{2m}\omega_w\sin(2\omega_w t^\prime)
+\label{eqn:Ut}
+\end{equation}
+%
+where $t^\prime=t+t_0$, where $t_0$ represents a time shift in the
+signal, which is automatically determined to ensure that $U_0(t=0)=0$.
+Note that a sinusoidal free stream velocity signal is achieved by
+setting $U_{2m}=0$, whereby $t_0=0$.
+
+For steady current simulations the oscillatory part of the pressure
+gradient can be switched off by setting $U_{1m}=U_{2m}=0$.  The
+constant pressure gradient term will then be $-P_x=U_f^2/h_m$ once
+steady-state conditions are achieved, where $h_m$ is the height of the
+model domain, hence it can be prescribed based on a desired friction
+velocity.
+
+
+\subsection{Matlab files}
+
+The model described above is essentially contained within two Matlab
+M-files: \texttt{Main.m} and \texttt{RANS.m}.  All set-up is made near
+the top of the script \texttt{Main.m}, which should be fairly self
+explanatory.  The implementation allows various terms to be easily
+incorporated or shut off.  For example, the inclusion of the
+turbulence model itself is controlled by the \texttt{turb} flag in
+\texttt{Main.m} \ie if this flag is set to 0 the simulation will be
+laminar, whereas if it is 1 then the turbulence model is used.
+Similarly, the inclusion of the second-order $O(a\kappa)$ terms
+underlined above is controlled by the \texttt{sec} flag (\ie for flow
+in a u-tube, these should be switched off by setting
+\texttt{sec}$=0$).  Finally, the inclusion of the suspended sediment
+calculation is controlled by the \texttt{Sus} flag.  All input
+variables are in SI units.
+
+The evaluation of the time derivatives
+(\ref{eqn:u})--(\ref{eqn:omega}) and (\ref{eqn:C}) for a given state
+is performed within the the function \texttt{RANS.m}, making use of
+finite difference approximations for the required vertical spatial
+derivatives.  This function is utilized by Matlab's stiff ODE solver
+\texttt{ode15s}, which provides dynamic time step control, and is used
+for the time integration.  The call to this internal function is made
+in the \texttt{Main.m} script.
+
+For a given set up, the model can be run by executing the
+\texttt{Main.m} script.  After a simulation is completed the important
+variables are exported to a file having the name specified by the
+\texttt{OutFileName} variable, which can then be easily loaded into
+Matlab.  An example of how to load the data, plot time series, and
+make animations from the model results is provided in a third script
+\texttt{PostProcess.m}.
+
+
+\section{Conclusions}
+\label{sec:Conclusions}
+
+This note describes a Matlab implementation of a Reynolds-averaged
+Navier-Stokes model, combined with the $k$-$\omega$ turbulence closure
+of \cite{Wilcox2006}, which can be used for performing simple (wave
+plus current) boundary layer simulations.  The hydrodynamic model is
+also coupled with a suspended sediment description.  It is again hoped
+that the model will be useful to students for demonstration of
+turbulence and sediment tranport processes, including possible
+research purposes.
+
+
+\bibliography{\bibpath/References}
+
+\end{document}

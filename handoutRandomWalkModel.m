@@ -23,7 +23,8 @@ k(1) = 10e-4;
 w = MatRANS.omega(end,:);
 Uf = MatRANS.Uf(end);
 L = beta^(-1/4).*(sqrt(k)./w);
-vprime = 1./(k.*3);
+%vprime = 1./(k.*3);
+vprime = k./3;
 RND_mean = 0;
 RND_std_dev = 1;
 
@@ -34,10 +35,10 @@ Y = y./h;
 U_nd = u_mean./Uf;
 k_nd = k./(Uf^2);
 
-vprime_nd = vprime./Uf;
+%vprime_nd = vprime./Uf; %also wrong
 %vprime_nd = k_nd./3; %WRONG
 
-vrms = sqrt(vprime_nd);
+vrms = sqrt(vprime)./Uf;
 
 L_nd = L./h;
 dT = L_nd./vrms;
@@ -47,7 +48,7 @@ dT = L_nd./vrms;
 
 Np = 100; % number of particles
 N_it = 5000; %number of iterations for break
-NT = 500; %time
+NT = 25; %time
 P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
 
 % % % % % % Vertical and horizontal positions
@@ -66,11 +67,34 @@ P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
 y_bottom = 70*nu/Uf/h;
 y_top = 1;
 
+fig1 = figure();
+xlabel('X position');
+ylabel('Y position');
+hold on
+yline(y_bottom);
+yline(y_top);
+
+fig2 = figure();
+xlabel('X position');
+ylabel('Y position');
+hold on
+yline(y_bottom);
+yline(y_top);
+
+fig3 = figure();
+hold on
+xlabel('Mean X position')
+ylabel('Time')
 
 %% loop over the number of particles
 for jj = 1 : Np
     
     ii = 1; %time steps
+    
+    Xp = zeros();
+    Yp = zeros();
+    
+    
     
     %initial conditions
     Xp(1) = 0;
@@ -81,8 +105,8 @@ for jj = 1 : Np
     
     
     % loop to calculate one particle track based on the initial position
-    while Tp(ii)<=N_it && ii<=NT %why is the limit like this i dont understand
-    %while ii<=N_it && Tp(ii)<=NT %this is wrong but why? i do not
+    %while Tp(ii)<=N_it && ii<=NT %why is the limit like this i dont understand
+    while ii<=N_it && Tp(ii)<=NT %this is wrong but why? i do not
     %understand what these limits mean
         ar = randn;
         %ar = normrnd(RND_mean, RND_std_dev); %normal distribution
@@ -100,14 +124,14 @@ for jj = 1 : Np
         
         %find rms v prime
         vrms_p = interp1(Y, vrms, Yp(ii)); %v rms as a vector in time
-        dY = ar.*vrms_p.*dT(ii); %change in y velocity
+        dY = ar*vrms_p*del_T(ii); %change in y velocity
         
         %boundary conditions for rms v prime (reflect the y vector with the
         %same angle as before)
         if (Yp(ii)+ dY) > y_top
             Yp(ii+1) = y_top - (dY -(y_top - Yp(ii)));
         elseif (Yp(ii) + dY) < y_bottom
-            Yp(ii+1) = y_top + (-dY - (Yp(ii)-y_bottom));
+            Yp(ii+1) = y_bottom + (-dY - (Yp(ii)-y_bottom));
         else
             Yp(ii+1) = Yp(ii) + dY;
         end
@@ -136,28 +160,14 @@ for jj = 1 : Np
     P(jj).Tp = Tp(1:(ii));
     X_mean(jj) = sum(Xp)/length(Xp);
     
-    figure(1)
+    figure(fig1);
     plot(Xp(1:(ii)),Yp(1:(ii)),'-');
-    xlabel('X position');
-    ylabel('Y position');
-    hold on
-    yline(y_bottom);
-    yline(y_top);
 
-    figure(2)
-    plot(Xp(end-1), Yp(end-1),'o');
-    xlabel('X position');
-    ylabel('Y position');
-    hold on
-    yline(y_bottom);
-    yline(y_top);
+    figure(fig2);
+    plot(Xp(end), Yp(end),'o');
 
-
-    figure(3)
-    plot(Xp,Tp);
-    hold on
-    xlabel('Mean X position')
-    ylabel('Time')
+    %figure(3);
+    %plot(Xp,Tp);
     
 end
 
