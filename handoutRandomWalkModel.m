@@ -23,8 +23,9 @@ k(1) = 10e-4;
 w = MatRANS.omega(end,:);
 Uf = MatRANS.Uf(end);
 L = beta^(-1/4).*(sqrt(k)./w);
-% vprime = 1./(k.*3);
+%vprime = 1./(k.*3);
 vprime = k./3;
+
 RND_mean = 0;
 RND_std_dev = 1;
 
@@ -35,20 +36,21 @@ Y = y./h;
 U_nd = u_mean./Uf;
 k_nd = k./(Uf^2);
 
-vprime_nd = vprime./Uf;
+%vprime_nd = vprime./Uf; %also wrong
 %vprime_nd = k_nd./3; %WRONG
 
-vrms = sqrt(vprime_nd);
+vrms = sqrt(vprime)./Uf;
 
 L_nd = L./h;
 dT = L_nd./vrms;
 
-
 %% Parameters and Arrays for storing data
 
-Np = 100; % number of particles
+Np = 200; % number of particles
 N_it = 5000; %number of iterations for break
-NT = 50; %time
+
+NT = 25; %time
+
 P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
 
 
@@ -70,41 +72,63 @@ P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
 y_bottom = 70*nu/Uf/h;
 y_top = 1;
 
+fig1 = figure();
+xlabel('X position');
+ylabel('Y position');
+hold on
+yline(y_bottom);
+yline(y_top);
+
+fig2 = figure();
+xlabel('X position');
+ylabel('Y position');
+hold on
+yline(y_bottom);
+yline(y_top);
+
+fig3 = figure();
+hold on
+xlabel('Mean X position')
+ylabel('Time')
 
 %% loop over the number of particles
 for jj = 1 : Np
     
     ii = 1; %time steps
     
+    Xp = zeros();
+    Yp = zeros();
+    
+    
+    
     %initial conditions
     Xp(1) = 0;
     Tp(1) = 0;
     Yp(1) = y_bottom + (y_top-y_bottom)*rand(1);
     
-    
-    
+    Up_y(1) = interp1(Y, U_nd, Yp(1)); %interpolate the non-dimensional u against y to find it at the step ii
+
     
     % loop to calculate one particle track based on the initial position
-    while Tp(ii)<=N_it && ii<=NT %why is the limit like this i dont understand
-    %while ii<=N_it && Tp(ii)<=NT %this is wrong but why? i do not
+    %while Tp(ii)<=N_it && ii<=NT %why is the limit like this i dont understand
+    while ii<=N_it && Tp(ii)<=NT %this is wrong but why? i do not
     %understand what these limits mean
+
         ar = randn;
         %ar = normrnd(RND_mean, RND_std_dev); %normal distribution
-        
-        del_T(ii) = interp1(Y, dT, Yp(ii)); %interpolate the time step across Y
-        Tp(ii+1) = Tp(ii) + del_T(ii); %add the time step to the initial time
-        %Time   = Tp(ii); %this is now the new interpolated time that we use to find the velocity and position
+        del_T = interp1(Y, dT, Yp(ii)); %interpolate the time step across Y
+        Tp(ii+1) = Tp(ii) + del_T; %add the time step to the initial time
         
         %initialise the velocity of the particle for the first time step
-        if ii == 1
-            Up_y(ii) = interp1(Y, U_nd, Yp(ii)); %interpolate the non-dimensional u against y to find it at the step ii
-        else %if it is not the initial value, it just stays the same --> run later
+        if ii > 1
+        %if it is not the initial value, it just stays the same --> run later
             Up_y(ii) = up_dy;
         end
         
         %find rms v prime
         vrms_p = interp1(Y, vrms, Yp(ii)); %v rms as a vector in time
-        dY = ar.*vrms_p.*dT(ii); %change in y velocity
+        dY = ar*vrms_p*del_T; %change in y velocity
+
         
         %boundary conditions for rms v prime (reflect the y vector with the
         %same angle as before)
@@ -116,11 +140,10 @@ for jj = 1 : Np
             Yp(ii+1) = Yp(ii) + dY;
         end
         
-        
         % Obtain the streamwise velocity at the next vertical position
         up_dy    = interp1(Y, U_nd, Yp(ii+1));
         % Calculate the streamwise displacement and position
-        dX(ii)   = 0.5 * del_T(ii)*(up_dy + Up_y(ii));
+        dX(ii)   = 0.5 * del_T *(up_dy + Up_y(ii));
         %dx = (U_nd.*Yp(ii) + U_nd.*(Yp(ii)+up_dy(ii))).*del_T(ii)./2;
         Xp(ii+1) = Xp(ii) + dX(ii);
         
@@ -140,29 +163,14 @@ for jj = 1 : Np
     P(jj).Tp = Tp(1:(ii));
     X_mean(jj) = sum(Xp)/length(Xp);
     
-    figure(1)
+    figure(fig1);
     plot(Xp(1:(ii)),Yp(1:(ii)),'-');
-    xlabel('X position');
-    ylabel('Y position');
-    hold on
-    yline(y_bottom);
-    yline(y_top);
 
-    figure(2)
-    plot(Xp(end-1), Yp(end-1),'o');
-    xlabel('X position');
-    ylabel('Y position');
-    hold on
-    yline(y_bottom);
-    yline(y_top);
+    figure(fig2);
+    plot(Xp(end), Yp(end),'o');
 
-
-    figure(3)
-    plot(Xp,Tp);
-    hold on
-    xlabel('Mean X position')
-    ylabel('Time')
-    
+    %figure(3);
+    %plot(Xp,Tp);
 end
 
 
