@@ -46,7 +46,7 @@ dT = L_nd./vrms;
 
 %% Parameters and Arrays for storing data
 
-Np = 100; % number of particles
+Np = 500; % number of particles
 N_it = 5000; %number of iterations for break
 
 NT = 25; %time
@@ -123,7 +123,7 @@ for jj = 1 : Np
         
         %find rms v prime
         vrms_p = interp1(Y, vrms, Yp(ii)); %v rms as a vector in time
-        dY = ar*vrms_p*del_T(ii); %change in y velocity
+        dY = ar*vrms_p*del_T; %change in y velocity
 
         
         %boundary conditions for rms v prime (reflect the y vector with the
