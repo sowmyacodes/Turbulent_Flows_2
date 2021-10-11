@@ -73,12 +73,12 @@ P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
 y_bottom = 70*nu/Uf/h;
 y_top = 1;
 
-% fig1 = figure();
-% xlabel('X position');
-% ylabel('Y position');
-% hold on
-% yline(y_bottom);
-% yline(y_top);
+fig1 = figure();
+xlabel('X position');
+ylabel('Y position');
+hold on
+yline(y_bottom);
+yline(y_top);
 
 fig2 = figure();
 xlabel('X position');
@@ -87,16 +87,12 @@ hold on
 yline(y_bottom);
 yline(y_top);
 
-% fig3 = figure();
-% hold on
-% xlabel('Mean X position')
-% ylabel('Time')
+fig3 = figure();
+hold on
+xlabel('Mean X position')
+ylabel('Time')
 
 rng(1);
-
-
-% Yp = zeros();
-Y0 = linspace(y_bottom,y_top,Np); 
 %% loop over the number of particles
 for jj = 1 : Np
     
@@ -110,8 +106,7 @@ for jj = 1 : Np
     %initial conditions
     Xp(1) = 0;
     Tp(1) = 0;
-    Yp(1) = Y0(jj);
-%     Yp(1) = y_bottom + (y_top-y_bottom)*rand(1);
+    Yp(1) = y_bottom + (y_top-y_bottom)*rand(1);
     
     Up_y(1) = interp1(Y, U_nd, Yp(1)); %interpolate the non-dimensional u against y to find it at the step ii
 
@@ -172,14 +167,14 @@ for jj = 1 : Np
 % % %     X_mean(ii) = mean(Xp(ii));
    
 
-%     figure(fig1);
-%     plot(Xp(1:(ii)),Yp(1:(ii)),'-');
+    figure(fig1);
+    plot(Xp(1:(ii)),Yp(1:(ii)),'-');
 
     figure(fig2);
     plot(Xp(end), Yp(end),'o');
 
-%     figure(fig3);
-%     plot(Xp,Tp);
+    figure(fig3);
+    plot(Xp,Tp);
 end
 
 
