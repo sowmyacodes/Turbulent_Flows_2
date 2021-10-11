@@ -1,10 +1,11 @@
-tclear all; close all; clc
+clear all; close all; clc
 load('out_MatRANS.mat');
 %% Initialising
 
 if ~isfield(MatRANS, 'Uf')
     MatRANS.Uf = sqrt(MatRANS.tau0/MatRANS.rho);
 end
+%% 
 
 % Constants
 g = 9.81; % Gravitational acceleration (m/s^2)
@@ -46,7 +47,7 @@ dT = L_nd./vrms_nd;
 
 %% Parameters and Arrays for storing data
 
-Np = 200; % number of particles
+Np = 1000; % number of particles
 N_it = 5000; %number of iterations for break
 
 NT = 25; %time
@@ -86,10 +87,10 @@ hold on
 yline(y_bottom);
 yline(y_top);
 
-% % % fig3 = figure();
-% % % hold on
-% % % xlabel('Mean X position')
-% % % ylabel('Time')
+fig3 = figure();
+hold on
+xlabel('Mean X position')
+ylabel('Time')
 
 %% loop over the number of particles
 for jj = 1 : Np
@@ -98,7 +99,7 @@ for jj = 1 : Np
     
     Xp = zeros();
     Yp = zeros();
-    
+    Tp = zeros();
     
     
     %initial conditions
@@ -161,38 +162,83 @@ for jj = 1 : Np
     P(jj).Yp = Yp(1:(ii));
     P(jj).Xp = Xp(1:(ii));
     P(jj).Tp = Tp(1:(ii));
-    X_mean(jj) = sum(Xp)/length(Xp);
-    
+% % %     X_mean(jj) = sum(Xp)/length(Xp);
+% % %     X_mean(ii) = mean(Xp(ii));
+   
+
     figure(fig1);
     plot(Xp(1:(ii)),Yp(1:(ii)),'-');
 
     figure(fig2);
     plot(Xp(end), Yp(end),'o');
 
-    %figure(3);
-    %plot(Xp,Tp);
+    figure(fig3);
+    plot(Xp,Tp);
 end
 
 
 %% Analyse results
 times = 5:5:25;
+Ntimes = size(times,2)
 
-X_mean_line = zeros(1, size(times,2));
-X_mean_variance_line = zeros(1, size(times,2));
-for i_time = 1:size(times,2)
-    X_mean = mean(Xp(i_time));
-    X_mean_line(i_time) = X_mean;
-    X_mean_variance_line(i_time) = mean((Xp(i_time)-X_mean).^2);
+% Preallocate for auxiliary calculations
+XP_store = zeros(Np,Ntimes);
+YP_store = zeros(Np,Ntimes);
+
+% Interpolate for each particle at the target time
+for jj = 1:Ntimes
+    for ii = 1:Np
+
+        XP_store(ii,jj) = interp1(P(ii).Tp, P(ii).Xp, times(jj));
+        YP_store(ii,jj) = interp1(P(ii).Tp, P(ii).Yp, times(jj));
+
+    end
+
 end
 
-f3 = figure("Name", "X_mean vs T")
-xlabel('T');
-ylabel('X_(mean)');
-plot(times, X_mean_line, '-')
+%%
+% Calculate the mean
+Xmean = mean(XP_store);
+Ymean = mean(YP_store);
 
-f4 = figure("Name", "X_mean_variance vs T")
-xlabel('T');
-ylabel('X_(mean variance)');
-plot(times, X_mean_variance_line, '-')
+% Calculate the variance
+Xvar  = var(XP_store);
+Yvar  = var(YP_store);
+%Xvar = (XP_store-Xmean).^2;
+%%
+
+figure(4)
+plot(times,Xmean,'k--');
+hold on
+plot(times,Xvar,'k-o');
+% ylabel('$\overline{X}$ [-]','Interpreter','latex');
+legend ('$\overline{X}$ [-]','$(X - \overline{X})^{2}$ [-]','Interpreter','latex');
+xlabel('Time [-]','Interpreter','latex');
+
+% figure(5)
+% plot(times,Xvar);
+% ylabel('$(X - \overline{X})^{2}$ [-]','Interpreter','latex');
+% xlabel('Time [-]','Interpreter','latex');
 
 
+
+% % % %%
+% % % X_mean_line = zeros(1, size(times,2));
+% % % X_mean_variance_line = zeros(1, size(times,2));
+% % % for i_time = 1:size(times,2)
+% % %     X_mean = mean(Xp(i_time));
+% % %     X_mean_line(i_time) = X_mean;
+% % %     X_mean_variance_line(i_time) = mean((Xp(i_time)-X_mean).^2);
+% % % end
+% % % 
+% % % f3 = figure("Name", "X_mean vs T")
+% % % xlabel('T');
+% % % ylabel('X_(mean)');
+% % % plot(times, X_mean_line, '-')
+% % % 
+% % % f4 = figure("Name", "X_mean_variance vs T")
+% % % xlabel('T');
+% % % ylabel('X_(mean variance)');
+% % % plot(times, X_mean_variance_line, '-')
+% % % 
+% % % 
