@@ -180,7 +180,7 @@ times = 5:5:25;
 X_mean_line = zeros(1, size(times,2));
 X_mean_variance_line = zeros(1, size(times,2));
 for i_time = 1:size(times,2)
-    X_mean = mean(Xp(i_time));
+    X_mean = mean(Xp(i_time, :));
     X_mean_line(i_time) = X_mean;
     X_mean_variance_line(i_time) = mean((Xp(i_time)-X_mean).^2);
 end
