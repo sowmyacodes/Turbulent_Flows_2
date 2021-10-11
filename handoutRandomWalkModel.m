@@ -1,4 +1,4 @@
-clear all; close all; clc
+tclear all; close all; clc
 load('out_MatRANS.mat');
 %% Initialising
 
