@@ -60,9 +60,10 @@ random_selection = 0;
 max_Tit = 1000;
 max_T   = 25;
 Np      = 1000; % number of particles
+yplus_bottom = 70;  % Non-dimensional height of the bottom limit
 % Plotting
 plot_trajectories = 0;
-plot_dispersant_cloud = 1;
+plot_dispersant_cloud = 0;
 
 %% Load the results file
 load(file_outmatrans);
@@ -119,7 +120,7 @@ U0m  = MatRANS.U0m;
 
 P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
 
-yplus_bottom = 70;  % Non-dimensional height of the bottom limit
+
 
 y_bottom = yplus_bottom *  nu/ Uf(end); % Dimensional bottom height
 y_top = h;                              % Dimensional top height
@@ -141,8 +142,8 @@ rms_vprime = sqrt(1 / 3 .* kp_last);  % Calculate the v' for each height
 Delta_t = Lp ./ rms_vprime;
 
 % Plot the time step size against the vertical dimension
-plot_me_(Delta_t,y,1, 'Step Size for each vertical position', ...
-         '$\Delta t$', '$y/h$', 'k-o');
+% plot_me_(Delta_t,y,1, 'Step Size for each vertical position', ...
+%          '$\Delta t$', '$y/h$', 'k-o');
 
 %% Preallocate arrays to store the data in each loop iteration
 % Vertical and horizontal positions
@@ -218,8 +219,8 @@ for jj = 1 : Np
         % Generate random number between -1 and 1 using a normal
         % distribution with mean 0 and stddev 1
         
-%         a_r = normrnd(0,1);
-        a_r = randn;
+        a_r = normrnd(0,1);
+%         a_r = randn;
         % Do calculations required in each time step 
 
         % Interpolate to get the V' rms
@@ -228,16 +229,23 @@ for jj = 1 : Np
         Dy(ii)   = a_r * sqrt(vpri_rms) * Dt(ii);
         Yp(ii+1) = Yp(ii) + Dy(ii); 
         % Check that the vertical position is not out of bounds
-        if Yp(ii+1) > y_top/h
-            auxY = Yp(ii+1) - y_top/h;
-%             Yp(ii+1) = Yp(ii+1) - auxY;
-            Yp(ii+1) = y_top/h - auxY;
-            Dy(ii) = Yp(ii+1) - Yp(ii);
-        elseif Yp(ii+1) < y_bottom/h
-            auxY = y_bottom/h - Yp(ii+1);
-%             Yp(ii+1) = Yp(ii+1) + auxY;
-            Yp(ii+1) = y_bottom/h + auxY;
-            Dy(ii) = Yp(ii+1) - Yp(ii);
+%         if jj == 991
+%             disp('something')
+%         end
+        
+        while Yp(ii+1) > y_top/h || Yp(ii+1) < y_bottom/h
+            if Yp(ii+1) > y_top/h
+                auxY = Yp(ii+1) - y_top/h;
+                Yp(ii+1) = y_top/h - auxY;
+                Dy(ii) = Yp(ii+1) - Yp(ii);
+            elseif Yp(ii+1) < y_bottom/h
+%                 if jj == 991
+%                     disp('im in the if branch')
+%                 end
+                auxY = y_bottom/h - Yp(ii+1);
+                Yp(ii+1) = y_bottom/h + auxY;
+                Dy(ii) = Yp(ii+1) - Yp(ii);
+            end
         end
 
         % Obtain the streamwise velocity at the next vertical position
@@ -262,9 +270,13 @@ for jj = 1 : Np
     end
 
     % Store particle track in variable P using e.g. P(jj).Xp = ...; 
-    P(jj).Yp = Yp(1:ii-1); 
-    P(jj).Xp = Xp(1:ii-1);
-    P(jj).Tp = Tp(1:ii-1);
+    P(jj).Yp  = Yp(1:ii-1); 
+    P(jj).Xp  = Xp(1:ii-1);
+    P(jj).Tp  = Tp(1:ii-1);
+    P(jj).Dx  = Dx(1:ii-1);
+    P(jj).Dy  = Dy(1:ii-1);
+    P(jj).Dt  = Dt(1:ii-1);
+    P(jj).upy = upy(1:ii-1);
 
     
 end
