@@ -115,12 +115,8 @@ h_m  = MatRANS.h_m;
 T    = MatRANS.T; 
 U0m  = MatRANS.U0m;
 
-% ... setup parameters other relevant parameters
-
 
 P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
-
-
 
 y_bottom = yplus_bottom *  nu/ Uf(end); % Dimensional bottom height
 y_top = h;                              % Dimensional top height
@@ -128,35 +124,42 @@ y_top = h;                              % Dimensional top height
 yp_bottom = y_bottom/h;                 % Non-dimensional bottom height
 yp_top    = y_top/h;                    % Non-dimensional top height
 
-
-
 % Calculate the length scale 
 l = beta_star0^(-0.25) * sqrt(k_last) ./ omega_last;
 
 Lp = l ./ h; % Non-dimensionalise the length scale
 
-rms_vprime = sqrt(1 / 3 .* kp_last);  % Calculate the v' for each height
+rms_Vprime = sqrt(1 / 3 .* kp_last);  % Calculate the v' for each height
+rms_vprime = sqrt(1 / 3 .* k_last);   % Same but dimensional
 
 % Calculate the time increment vector (the time step size depends on the
 % vertical location)
-Delta_t = Lp ./ rms_vprime;
+Delta_t = Lp ./ rms_Vprime; % Non-dimensional
+delta_t = l  ./ rms_vprime; % Dimensional
 
 % Plot the time step size against the vertical dimension
-% plot_me_(Delta_t,y,1, 'Step Size for each vertical position', ...
-%          '$\Delta t$', '$y/h$', 'k-o');
+plot_me_(Delta_t,y,1, 'Step Size for each vertical position', ...
+         '$\Delta t$', '$y/h$', 'k-o');
 
 %% Preallocate arrays to store the data in each loop iteration
 % Vertical and horizontal positions
-Yp  = zeros(max_Tit,1);
+Yp  = zeros(max_Tit,1); % Non-dimensional
 Xp  = zeros(max_Tit,1);
+yp  = zeros(max_Tit,1); % Dimensional
+xp  = zeros(max_Tit,1);
 % Time step size and time values
-Dt  = zeros(max_Tit,1);
+Dt  = zeros(max_Tit,1); % Non-dimensional
 Tp  = zeros(max_Tit,1);
+dt  = zeros(max_Tit,1); % Dimensional
+tp  = zeros(max_Tit,1);
 % Streamwise velocity
-upy = zeros(max_Tit,1);
+Upy = zeros(max_Tit,1); % Non-dimensional
+upy = zeros(max_Tit,1); % Dimensional
 % Vertical and horizontal displacements
-Dy  = zeros(max_Tit-1,1);
+Dy  = zeros(max_Tit-1,1); % Non-dimensional
 Dx  = zeros(max_Tit-1,1);
+dy  = zeros(max_Tit-1,1); % Dimensional
+dx  = zeros(max_Tit-1,1);
 
 %% Open figure to plot particles trajectories
 if plot_trajectories
@@ -175,7 +178,8 @@ end
 rng(1)
 
 if ~random_selection
-    y_initial = linspace(yp_bottom, yp_top, Np);
+    Y_initial = linspace(yp_bottom, yp_top, Np);
+    y_initial = linspace(y_bottom, y_top, Np);
 end
 
 % loop over the number of particles
@@ -190,44 +194,54 @@ for jj = 1 : Np
                                 % point of the particle
         yp0 = yp_bottom + (yp_top-yp_bottom)*ran_num; % Scale the random number 
                                                       % to the flume 
+        y0  = y_bottom + (y_top - y_bottom)*ran_num; % Dimensional
     else
-        yp0 = y_initial(jj);
+        yp0 = Y_initial(jj);
+        y0  = y_initial(jj);
     end
                                                   
     % Store the first value
     Yp(1) = yp0;
-    
+    yp(1) = y0;
     % Initialize time variable 
     time = 0;
 
     % loop to calculate one particle track based on the initial position
-    while ii <= max_Tit && time <= max_T % Limit the number of iterations and 
-                                       % the maximum time
+    while ii <= max_Tit && time <= max_T * Uf / h 
+                                % Limit the number of iterations and 
+                                         % the maximum time
         
         % Interpolate to get the time step
-        Dt(ii) = interp1(Y, Delta_t, Yp(ii));
+        Dt(ii)   = interp1(Y, Delta_t, Yp(ii));
+        dt(ii)   = interp1(y, delta_t, yp(ii));
         Tp(ii+1) = time + Dt(ii);
-        time   = Tp(ii+1);
+        tp(ii+1) = time + dt(ii);
+        time     = tp(ii+1);
 
         % Interpolate to get the non-dimensional streamwise velocity at y
         if ii == 1      % Only for the first time step
-            upy(ii) = interp1(Y, U, Yp(ii));
+            Upy(ii) = interp1(Y, U, Yp(ii));
+            upy(ii) = interp1(y, u, yp(ii));
         else            % Otherwise just assign the previous value
+            Upy(ii) = Up_dy;
             upy(ii) = up_dy;
         end
 
         % Generate random number between -1 and 1 using a normal
         % distribution with mean 0 and stddev 1
         
-%         a_r = normrnd(0,1);
-        a_r = randn;
+        a_r = normrnd(0,1);
+%         a_r = randn;
         % Do calculations required in each time step 
 
         % Interpolate to get the V' rms
-        vpri_rms = interp1(Y,rms_vprime, Yp(ii));
+        Vpri_rms = interp1(Y,rms_Vprime, Yp(ii));
+        vpri_rms = interp1(y,rms_vprime, yp(ii));
         % Calculate the vertical displacement and position
-        Dy(ii)   = a_r * sqrt(vpri_rms) * Dt(ii);
+        Dy(ii)   = a_r * sqrt(Vpri_rms) * Dt(ii);
         Yp(ii+1) = Yp(ii) + Dy(ii); 
+        dy(ii)   = a_r * sqrt(vpri_rms) * dt(ii);
+        yp(ii+1) = yp(ii) + dy(ii); 
         % Check that the vertical position is not out of bounds
 %         if jj == 991
 %             disp('something')
@@ -249,9 +263,9 @@ for jj = 1 : Np
         end
 
         % Obtain the streamwise velocity at the next vertical position
-        up_dy    = interp1(Y, U, Yp(ii+1));
+        Up_dy    = interp1(Y, U, Yp(ii+1));
         % Calculate the streamwise displacement and position
-        Dx(ii)   = 0.5 * Dt(ii)*(up_dy + upy(ii));
+        Dx(ii)   = 0.5 * Dt(ii)*(Up_dy + Upy(ii));
         Xp(ii+1) = Xp(ii) + Dx(ii);
         
         ii = ii + 1; % update time step at the end of the while loop
@@ -276,7 +290,7 @@ for jj = 1 : Np
     P(jj).Dx  = Dx(1:ii);
     P(jj).Dy  = Dy(1:ii);
     P(jj).Dt  = Dt(1:ii);
-    P(jj).upy = upy(1:ii);
+    P(jj).upy = Upy(1:ii);
 
     
 end

@@ -24,7 +24,7 @@ OutFileName = 'out_MatRANS.mat';
 h_m = 0.07; % Height of model depth (m)
 Uf = 0.0135; % Friction velocity (m/s)
 dy0 = 1*nu/Uf; % Near-wall grid size (m)
-stretch = 1.05; y = [0]; ycount = 1; dy=dy0;
+stretch = 1.02; y = [0]; ycount = 1; dy=dy0;
 while y(end) <= h_m
   ycount = ycount + 1; % Update counter
   y(ycount) = y(ycount-1) + dy0*stretch.^(ycount-2);  
