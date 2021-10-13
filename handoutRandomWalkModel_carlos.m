@@ -59,7 +59,7 @@ file_outmatrans = 'out_MatRANS.mat';
 random_selection = 0;
 max_Tit = 1000;
 max_T   = 25;
-Np      = 1000; % number of particles
+Np      = 3000; % number of particles
 yplus_bottom = 70;  % Non-dimensional height of the bottom limit
 % Plotting
 plot_trajectories = 0;
@@ -97,7 +97,7 @@ U       = u ./ Uf;
 % Turbulent kinetic energy
 k           = MatRANS.k; 
 k_last      = k(end, :);
-k_last(1,1) = 10e-4;                % Change the 0 to a small value
+k_last(1,1) = 10e-10;                % Change the 0 to a small value
 kp_last     = k_last ./ (Uf^2);     % Non-dimensionalise with Uf
 
 % Turbulent dissipation rate
@@ -206,8 +206,8 @@ for jj = 1 : Np
         
         % Interpolate to get the time step
         Dt(ii) = interp1(Y, Delta_t, Yp(ii));
-        Tp(ii) = time + Dt(ii);
-        time   = Tp(ii);
+        Tp(ii+1) = time + Dt(ii);
+        time   = Tp(ii+1);
 
         % Interpolate to get the non-dimensional streamwise velocity at y
         if ii == 1      % Only for the first time step
@@ -219,8 +219,8 @@ for jj = 1 : Np
         % Generate random number between -1 and 1 using a normal
         % distribution with mean 0 and stddev 1
         
-        a_r = normrnd(0,1);
-%         a_r = randn;
+%         a_r = normrnd(0,1);
+        a_r = randn;
         % Do calculations required in each time step 
 
         % Interpolate to get the V' rms
@@ -261,22 +261,22 @@ for jj = 1 : Np
     % Plot particle track
     if plot_trajectories
         figure(50)
-        plot(Xp(1:ii-1),Yp(1:ii-1),'--')
+        plot(Xp(1:ii),Yp(1:ii),'--')
     end
 
     if plot_dispersant_cloud
         figure(51)
-        plot(Xp(ii-1),Yp(ii-1), 'o')
+        plot(Xp(ii),Yp(ii), 'o')
     end
 
     % Store particle track in variable P using e.g. P(jj).Xp = ...; 
-    P(jj).Yp  = Yp(1:ii-1); 
-    P(jj).Xp  = Xp(1:ii-1);
-    P(jj).Tp  = Tp(1:ii-1);
-    P(jj).Dx  = Dx(1:ii-1);
-    P(jj).Dy  = Dy(1:ii-1);
-    P(jj).Dt  = Dt(1:ii-1);
-    P(jj).upy = upy(1:ii-1);
+    P(jj).Yp  = Yp(1:ii); 
+    P(jj).Xp  = Xp(1:ii);
+    P(jj).Tp  = Tp(1:ii);
+    P(jj).Dx  = Dx(1:ii);
+    P(jj).Dy  = Dy(1:ii);
+    P(jj).Dt  = Dt(1:ii);
+    P(jj).upy = upy(1:ii);
 
     
 end
