@@ -229,7 +229,7 @@ for jj = 1 : Np
         % Interpolate to get the V' rms
         vpri_rms = interp1(y,rms_vprime, yp(ii));
         % Calculate the vertical displacement and position
-        dy(ii)   = a_r * sqrt(vpri_rms) * dt(ii);
+        dy(ii)   = a_r * vpri_rms * dt(ii);
         yp(ii+1) = yp(ii) + dy(ii); 
         % Check that the vertical position is not out of bounds
 %         if jj == 991

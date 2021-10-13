@@ -1,24 +1,31 @@
-clear all; close all; clc
 %% MatRANS Simulations for the turbulent flow in a flume
-% Version 1
-% Author: Carlos Perez Moreno
-% Date: 08/10/2021
 % Denmark Technical University
 % 41129 Turbulent Flows · Assignment 2
+% Authors: 
+%  · Sowmya Srinivasan Iyer
+%  · Videep Goverdhan Kamath
+%  · Yann Birnie Scott 
+%  · Carlos Perez Moreno
+% 
+% Version 1
+% Date: 08/10/2021
 % -------------------------------------------------------------------------
 % MODIFICATIONS
 % Version 2. 09/10/2021
 % · Correct the mirroring of particles 
 % · Store the data in the structure and plot it in the loop
 % _________________________________________________________________________
-% Version 3. dd/mm/yyyy
-% · 
+% Version 3. 13/10/2021
+% · Include comparison with number of particles
+% · Correct error in DY formula
+% · Gather one-particle-analysis in an external function:
+%                                              'multi_particle_walk.m'
 % -------------------------------------------------------------------------
-%% FLOW REPRESENTATION
+%% FLOW PARAMETERS AND COORDINATES REPRESENTATION
 %
 %  y/\ 
 %   |
-%   |_____________________________________________________________
+%   |_____________________________________________________________ y_top
 %   |      |------|                            |
 %   |      |      /                            |
 %   |      |-----/                             |
@@ -27,7 +34,7 @@ clear all; close all; clc
 %   |      |  /                                |
 %   |      |_/                                 |
 %   |------------------------------------------|------------------ y+
-%   |                                          |
+%   |      ---> Uf                             |
 %   |_______________________________________________________________
 %   --------------------------------------------------------------> x 
 %
@@ -38,9 +45,14 @@ clear all; close all; clc
 % max_Tit         ----> Maximum number of iterations in the Time loop
 % max_T           ----> Non-dimensional Time limit for the Time loop
 %
-%
 %% VARIABLES DICTIONARY
 %
+% Np              ----> Number of particles for the analysis
+% Np_min          ----> Exponent of the min 10th power for comparison
+% Np_max          ----> Exponent of the max 10th power for comparison
+% NumNp           ----> Number of different Np for no of particle analysis
+% Np_vec          ----> Array with the numbers of particles per case
+% yplus_bottom    ----> Non-dimensional bottom limit for the calculations
 % n_t             ----> Number of time steps until RANS convergence [-]
 % ny              ----> Number of vertical grid points [-]
 % y               ----> Dimensional vertical position [m]
@@ -48,283 +60,135 @@ clear all; close all; clc
 % Y               ----> Non-dimensionalise vertical position [-]
 % Uf_vec          ----> Frictional speed at each RANS time iteration [m/s]
 % Uf              ----> Frictional speed at last RANS time iteration [m/s]
+% T_comp          ----> Non-dimensional time for 
 %
-%
+
+clear; close all; clc
 
 %% Parameters
 % Preprocess of data
 beta_star0      = 0.09;
 file_outmatrans = 'out_MatRANS.mat';
 % Track particles
-random_selection = 0;
-max_Tit = 1000;
-max_T   = 25;
-Np      = 3000; % number of particles
+random_selection = 0; % Flag for using random selection of starting points
+max_Tit = 5000; % Limit of the time iterations to reach maximum allowed time
+max_T   = 25;   % Maximum allowed time (non-dimensional)
+Np_min  = 1;   % Exponent of the min 10th power for no of particle analysis
+Np_max  = 5;   % Exponent of the max 10th power for no of particle analysis
+NumNp   = 25;  % Number of different Np for no of particle analysis
+Np      = 2e+3;     % number of particles for standard analysis
 yplus_bottom = 70;  % Non-dimensional height of the bottom limit
+Tobj   = [5 10 15 20 25]; % Target non-dimensional times for the statistical analysis
+T_comp = 10;   % Non-dimensional time to analyse the influence of Np
 % Plotting
-plot_trajectories = 0;
-plot_dispersant_cloud = 0;
+plot_trajectories = 0; % Flag for plotting trajectories
+plot_dispersant_cloud = 0; % Flag for plotting the dispersant cloud at maxT
+% File comparison Np data and re-run
+file_comparison_np = 'comparison_np_data.mat';
+rerun = 0;
 
 %% Load the results file
 load(file_outmatrans);
 
-% If the frictional velocity Uf is not included in the output calculate it
-% Probably unnecesary for our case but nevermind
-if ~isfield(MatRANS, 'Uf')
-    MatRANS.Uf = sqrt(MatRANS.tau0/MatRANS.rho);
-end
+%% Calculate the results
 
-%% Load the MatRANS Output Data
+% Define an array with the target number of particles
+Np_vec = logspace(Np_min, Np_max, NumNp);
 
-% Number of time simulations and number of grid points
-n_t = MatRANS.n_t; 
-ny  = MatRANS.n_y;
-
-% Vertical position
-y = MatRANS.y;      % Dimensional vertical position
-h = y(end);         % Height of the flume [m]
-Y = y/h;            % Non-dimensionalise vertical direction
-
-% Frictional speed
-Uf_vec = MatRANS.Uf;
-Uf     = Uf_vec(end);
-
-% Streamwise speed
-u_total = MatRANS.u; 
-u       = u_total(end,:);
-U       = u ./ Uf;
-
-% Turbulent kinetic energy
-k           = MatRANS.k; 
-k_last      = k(end, :);
-k_last(1,1) = 10e-10;                % Change the 0 to a small value
-kp_last     = k_last ./ (Uf^2);     % Non-dimensionalise with Uf
-
-% Turbulent dissipation rate
-omega            = MatRANS.omega; 
-omega_last       = omega(end,:);
-% omega_last(1,1)  = 10^-8; % I dont know if this is needed
-
-nu_t = MatRANS.nu_t;
-tau0 = MatRANS.tau0;
-
-nu   = MatRANS.nu; 
-rho  = MatRANS.rho; 
-k_s  = MatRANS.k_s;
-h_m  = MatRANS.h_m; 
-T    = MatRANS.T; 
-U0m  = MatRANS.U0m;
-
-
-P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
-
-y_bottom = yplus_bottom *  nu/ Uf(end); % Dimensional bottom height
-y_top = h;                              % Dimensional top height
-
-yp_bottom = y_bottom/h;                 % Non-dimensional bottom height
-yp_top    = y_top/h;                    % Non-dimensional top height
-
-% Calculate the length scale 
-l = beta_star0^(-0.25) * sqrt(k_last) ./ omega_last;
-
-Lp = l ./ h; % Non-dimensionalise the length scale
-
-rms_Vprime = sqrt(1 / 3 .* kp_last);  % Calculate the v' for each height
-rms_vprime = sqrt(1 / 3 .* k_last);   % Same but dimensional
-
-% Calculate the time increment vector (the time step size depends on the
-% vertical location)
-Delta_t = Lp ./ rms_Vprime; % Non-dimensional
-delta_t = l  ./ rms_vprime; % Dimensional
-
-% Plot the time step size against the vertical dimension
-plot_me_(Delta_t,y,1, 'Step Size for each vertical position', ...
-         '$\Delta t$', '$y/h$', 'k-o');
-
-%% Preallocate arrays to store the data in each loop iteration
-% Vertical and horizontal positions
-Yp  = zeros(max_Tit,1); % Non-dimensional
-Xp  = zeros(max_Tit,1);
-yp  = zeros(max_Tit,1); % Dimensional
-xp  = zeros(max_Tit,1);
-% Time step size and time values
-Dt  = zeros(max_Tit,1); % Non-dimensional
-Tp  = zeros(max_Tit,1);
-dt  = zeros(max_Tit,1); % Dimensional
-tp  = zeros(max_Tit,1);
-% Streamwise velocity
-Upy = zeros(max_Tit,1); % Non-dimensional
-upy = zeros(max_Tit,1); % Dimensional
-% Vertical and horizontal displacements
-Dy  = zeros(max_Tit-1,1); % Non-dimensional
-Dx  = zeros(max_Tit-1,1);
-dy  = zeros(max_Tit-1,1); % Dimensional
-dx  = zeros(max_Tit-1,1);
-
-%% Open figure to plot particles trajectories
-if plot_trajectories
-    figure(50)
-    hold on
-end
-
-if plot_dispersant_cloud
-    figure(51)
-    hold on
-end
-
-
-%% Calculate the particles' trajectories
-% Set a seed for the random number generator in order to compare results
-rng(1)
-
-if ~random_selection
-    Y_initial = linspace(yp_bottom, yp_top, Np);
-    y_initial = linspace(y_bottom, y_top, Np);
-end
-
-% loop over the number of particles
-for jj = 1 : Np
-
-    % Time counter
-    ii = 1; 
-
-    if random_selection
-        % initialize particle start position with a random distribution
-        ran_num   = rand(1);    % Generate a random number to get the starting 
-                                % point of the particle
-        yp0 = yp_bottom + (yp_top-yp_bottom)*ran_num; % Scale the random number 
-                                                      % to the flume 
-        y0  = y_bottom + (y_top - y_bottom)*ran_num; % Dimensional
-    else
-        yp0 = Y_initial(jj);
-        y0  = y_initial(jj);
-    end
-                                                  
-    % Store the first value
-    Yp(1) = yp0;
-    yp(1) = y0;
-    % Initialize time variable 
-    time = 0;
-
-    % loop to calculate one particle track based on the initial position
-    while ii <= max_Tit && time <= max_T * Uf / h 
-                                % Limit the number of iterations and 
-                                         % the maximum time
-        
-        % Interpolate to get the time step
-        Dt(ii)   = interp1(Y, Delta_t, Yp(ii));
-        dt(ii)   = interp1(y, delta_t, yp(ii));
-        Tp(ii+1) = time + Dt(ii);
-        tp(ii+1) = time + dt(ii);
-        time     = tp(ii+1);
-
-        % Interpolate to get the non-dimensional streamwise velocity at y
-        if ii == 1      % Only for the first time step
-            Upy(ii) = interp1(Y, U, Yp(ii));
-            upy(ii) = interp1(y, u, yp(ii));
-        else            % Otherwise just assign the previous value
-            Upy(ii) = Up_dy;
-            upy(ii) = up_dy;
-        end
-
-        % Generate random number between -1 and 1 using a normal
-        % distribution with mean 0 and stddev 1
-        
-        a_r = normrnd(0,1);
-%         a_r = randn;
-        % Do calculations required in each time step 
-
-        % Interpolate to get the V' rms
-        Vpri_rms = interp1(Y,rms_Vprime, Yp(ii));
-        vpri_rms = interp1(y,rms_vprime, yp(ii));
-        % Calculate the vertical displacement and position
-        Dy(ii)   = a_r * sqrt(Vpri_rms) * Dt(ii);
-        Yp(ii+1) = Yp(ii) + Dy(ii); 
-        dy(ii)   = a_r * sqrt(vpri_rms) * dt(ii);
-        yp(ii+1) = yp(ii) + dy(ii); 
-        % Check that the vertical position is not out of bounds
-%         if jj == 991
-%             disp('something')
-%         end
-        
-        while Yp(ii+1) > y_top/h || Yp(ii+1) < y_bottom/h
-            if Yp(ii+1) > y_top/h
-                auxY = Yp(ii+1) - y_top/h;
-                Yp(ii+1) = y_top/h - auxY;
-                Dy(ii) = Yp(ii+1) - Yp(ii);
-            elseif Yp(ii+1) < y_bottom/h
-%                 if jj == 991
-%                     disp('im in the if branch')
-%                 end
-                auxY = y_bottom/h - Yp(ii+1);
-                Yp(ii+1) = y_bottom/h + auxY;
-                Dy(ii) = Yp(ii+1) - Yp(ii);
-            end
-        end
-
-        % Obtain the streamwise velocity at the next vertical position
-        Up_dy    = interp1(Y, U, Yp(ii+1));
-        % Calculate the streamwise displacement and position
-        Dx(ii)   = 0.5 * Dt(ii)*(Up_dy + Upy(ii));
-        Xp(ii+1) = Xp(ii) + Dx(ii);
-        
-        ii = ii + 1; % update time step at the end of the while loop
-        
-    end
-
-    % Plot particle track
-    if plot_trajectories
-        figure(50)
-        plot(Xp(1:ii),Yp(1:ii),'--')
-    end
-
-    if plot_dispersant_cloud
-        figure(51)
-        plot(Xp(ii),Yp(ii), 'o')
-    end
-
-    % Store particle track in variable P using e.g. P(jj).Xp = ...; 
-    P(jj).Yp  = Yp(1:ii); 
-    P(jj).Xp  = Xp(1:ii);
-    P(jj).Tp  = Tp(1:ii);
-    P(jj).Dx  = Dx(1:ii);
-    P(jj).Dy  = Dy(1:ii);
-    P(jj).Dt  = Dt(1:ii);
-    P(jj).upy = Upy(1:ii);
-
+if rerun == 1
+    % Analysis for a series of number of particles
+    % Preallocate arrays to store the values to plot
+    Xmeans = zeros(NumNp,1);
+    Xvars  = zeros(NumNp,1);
     
+    
+    for ii = 1:NumNp
+        % Select the number of particles
+        NPart = Np_vec(ii); 
+        % Call the particle walker to obtain the statistics
+        [~, stats] = multi_particle_walk(MatRANS, NPart, beta_star0, ...
+                    max_Tit, max_T, yplus_bottom, T_comp, ...
+                    random_selection, plot_trajectories, ...
+                    plot_dispersant_cloud);
+        % Store the mean and variance
+        Xmeans(ii) = stats.Xmeans;
+        Xvars(ii)  = stats.Xvars;
+    
+    end
+    % Save the file to avoid rerun unnecessarily
+    save('comparison_np_data.mat', 'Xmeans','Xvars');
+else % If you don't want to rerun
+    % Load the existing data to compare
+    load('comparison_np_data.mat');
 end
 
-%% Analyse results for T = 10s
+% Open figures for plotting the results of the comparison
 
-Tobj = 10;
-[XP_mean, YP_mean, XP_var, YP_var] = get_particle_stats(P,Tobj);
+figure("Name","Comparison of mean values for different Np");
+semilogx(Np_vec, Xmeans,'k-o');
+grid on
+xlabel('Number of particles, $N_{P}$', 'Interpreter','latex')
+ylabel('$\overline{X}$', 'Interpreter','latex')
+title('\textbf{Comparison of mean values at $T = 10$}', ...
+    'Interpreter','latex')
+
+figure("Name","Comparison of variance for different Np");
+semilogx(Np_vec, Xvars,'k-o')
+grid on
+xlabel('Number of particles, $N_{P}$', 'Interpreter','latex')
+ylabel('Variance $\overline{(X - \overline{X})^{2}}$', 'Interpreter','latex')
+title('\textbf{Comparison of variance values at $T = 10$}', ...
+    'Interpreter','latex')
 
 
 
-%% Do the same for a series of time targets
+%% Analysis along time
 
-Tobj   = [5 10 15 20 25];
-NTimes = size(Tobj,2);
+[P, stats] = multi_particle_walk(MatRANS, Np, beta_star0, max_Tit, max_T...
+             , yplus_bottom, Tobj, random_selection, plot_trajectories, ...
+             plot_dispersant_cloud);
 
-% Preallocate arrays to store the mean values
-XP_means = zeros(NTimes,1);
-YP_means = zeros(NTimes,1);
-XP_vars  = zeros(NTimes,1);
-YP_vars  = zeros(NTimes,1);
+%% Plot the results
 
-for ii = 1:NTimes
+XP_means = stats.Xmeans;
+XP_vars  = stats.Xvars;
+YP_means = stats.Ymeans;
+YP_vars  = stats.Yvars;
 
-    [XP_means(ii), YP_means(ii), XP_vars(ii), YP_vars(ii)] = ...
-        get_particle_stats(P,Tobj(ii));
+fig_xmean = plot_me_(Tobj, XP_means, 1,'Streamwise mean position of particles', ...
+                    'Time [-]', '$\overline{X}$', 'k-');
+% plot_me_(Tobj, YP_means, 1,'Verticle mean position of particles', ...
+%     'Time [-]', '$\overline{Y}$', 'k-'); % Not so interesting to plot 
 
-end
+fig_xvar  = plot_me_(Tobj, XP_vars, 1,'Streamwise position variance of particles', ...
+    'Time [-]', 'Variance $\overline{(X - \overline{X})^{2}}$', 'k-');
 
-plot_me_(Tobj, XP_means, 1,'Streamwise mean position of particles', ...
-    'Time [-]', '$\overline{X}$', 'k-')
-plot_me_(Tobj, YP_means, 1,'Verticle mean position of particles', ...
-    'Time [-]', '$\overline{Y}$', 'k-')
-plot_me_(Tobj, XP_vars, 1,'Streamwise position variance of particles', ...
-    'Time [-]', 'Variance $\overline{(X - \overline{X})^{2}}$', 'k-')
-plot_me_(Tobj, YP_vars, 1,'Verticle position variance of particles', ...
-    'Time [-]', 'Variance $\overline{(Y - \overline{Y})^{2}}$', 'k-')
+% plot_me_(Tobj, YP_vars, 1,'Verticle position variance of particles', ...
+%     'Time [-]', 'Variance $\overline{(Y - \overline{Y})^{2}}$', 'k-');
+
+%% Calculate the dispersion coefficient
+
+% Ultimate mean velocity of the cloud
+
+p1 = polyfit(Tobj,XP_means,1);
+p2 = polyfit(Tobj,XP_vars,1);
+xmean_fit = polyval(p1,Tobj);
+xvar_fit = polyval(p2,Tobj);
+
+% Plot the fit of the mean
+figure(fig_xmean);
+hold on
+plot(Tobj,xmean_fit, 'k--');
+legend('$\overline{X}$','$\overline{X}$ fit', 'interpreter', 'latex', ...
+    'Location','best')
+
+% Plot the fit of the variance
+figure(fig_xvar);
+hold on
+plot(Tobj,xvar_fit, 'k--');
+legend('$(X - \overline{X})^{2}$','$(X - \overline{X})^{2}$ fit', ...
+    'interpreter', 'latex', 'Location','best')
+
+% Calculate the longitudinal dispersion coefficient
+D1 = 1 / 2 * p2(1);
+fprintf('The longitudinal dispersion coefficient is D1 = %4.4f\n', D1);
