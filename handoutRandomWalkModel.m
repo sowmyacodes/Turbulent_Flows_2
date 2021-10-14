@@ -1,4 +1,5 @@
 clear all; close all; clc
+
 load('out_MatRANS.mat');
 %% Initialising
 
@@ -47,7 +48,7 @@ dT = L_nd./vrms_nd;
 
 %% Parameters and Arrays for storing data
 
-Np = 1000; % number of particles
+Np = 5; % number of particles
 N_it = 5000; %number of iterations for break
 
 NT = 25; %non-dimensional time limit
@@ -175,8 +176,8 @@ for jj = 1 : Np
 %     figure(fig1);
 %     plot(Xp(1:(ii)),Yp(1:(ii)),'-');
 
-    figure(fig2);
-    plot(Xp(end), Yp(end),'o');
+%     figure(fig2);
+%     plot(Xp(end), Yp(end),'o');
 
 %     figure(fig3);
 %     plot(Xp,Tp);
@@ -185,7 +186,7 @@ end
 
 %% Analyse results
 times = 5:5:25;
-Ntimes = size(times,2)
+Ntimes = size(times,2);
 
 % Preallocate for auxiliary calculations
 XP_store = zeros(Np,Ntimes);
