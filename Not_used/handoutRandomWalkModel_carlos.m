@@ -20,20 +20,17 @@
 % · Correct error in DY formula
 % · Gather one-particle-analysis in an external function:
 %                                              'multi_particle_walk.m'
-% _________________________________________________________________________
-% Version 4. 14/10/2021
-% · Auto-print figures in pdf and update labels
 % -------------------------------------------------------------------------
 %% FLOW PARAMETERS AND COORDINATES REPRESENTATION
 %
 %  y/\ 
 %   |
 %   |_____________________________________________________________ y_top
-%   |      |----->|                            |
+%   |      |------|                            |
 %   |      |      /                            |
-%   |      |---->/                             |
+%   |      |-----/                             |
 %   |      |    /                              | h
-%   |      |-->/                               |
+%   |      |---/                               |
 %   |      |  /                                |
 %   |      |_/                                 |
 %   |------------------------------------------|------------------ y+
@@ -41,14 +38,14 @@
 %   |_______________________________________________________________
 %   --------------------------------------------------------------> x 
 %
-%% PARAMETERS DICTIONARY (needs to be completed)
+%% PARAMETERS DICTIONARY
 %
 % beta_star0      ----> Length scale parameter
 % file_outmatrans ----> Path to file containing output of RANS model
 % max_Tit         ----> Maximum number of iterations in the Time loop
 % max_T           ----> Non-dimensional Time limit for the Time loop
 %
-%% VARIABLES DICTIONARY (needs to be completed)
+%% VARIABLES DICTIONARY
 %
 % Np              ----> Number of particles for the analysis
 % Np_min          ----> Exponent of the min 10th power for comparison
@@ -79,84 +76,21 @@ max_T   = 25;   % Maximum allowed time (non-dimensional)
 Np_min  = 1;   % Exponent of the min 10th power for no of particle analysis
 Np_max  = 5;   % Exponent of the max 10th power for no of particle analysis
 NumNp   = 25;  % Number of different Np for no of particle analysis
-Np      = 680;     % number of particles for standard analysis
+Np      = 2e+3;     % number of particles for standard analysis
 yplus_bottom = 70;  % Non-dimensional height of the bottom limit
 Tobj   = [5 10 15 20 25]; % Target non-dimensional times for the statistical analysis
 T_comp = 10;   % Non-dimensional time to analyse the influence of Np
 % Plotting
-plot_trajectories = 0;     % Flag for plotting trajectories
+plot_trajectories = 0; % Flag for plotting trajectories
 plot_dispersant_cloud = 0; % Flag for plotting the dispersant cloud at maxT
-fSize = 14; % Font size for the labels
-if ~exist('./figures','dir')
-    mkdir figures
-end
 % File comparison Np data and re-run
 file_comparison_np = 'comparison_np_data.mat';
 rerun = 0;
-Np_showpath = 5; % Exponent of the number of particles to show the path
-doSensitivityAnalysis = 1;
-generateMatRANS_file  = 1;
 
-%% Mesh sensitivity analysis with MatRANS
-doISave = 0; % save velocity profiles, 0:no, 1:yes
-doIPlot = 0; % Show internal plots of MatRANS, 0: No, 1: Yes
-
-global ioutplot
-ioutplot = doIPlot; 
-if doSensitivityAnalysis
-    stretch_vec = fliplr([1.1 1.08 1.06 1.04 1.02 1.01]);
-    for i = 1:length(stretch_vec) 
-
-        stretch = stretch_vec(i);
-        MatRANS = handoutFlowModel(stretch,doISave,doIPlot);
-        if ~exist('y_sensitivity','var')
-            y_sensitivity = MatRANS.y;
-            u(i,:) = MatRANS.u(end,:);
-        else
-            u(i,:) = interp1(MatRANS.y,MatRANS.u(end,:),y_sensitivity);
-            err(i) = max(abs( (u(i,:)-u(1,:))./u(1,:) ));
-        end
-    end
-    figure('Name','Mesh sensitivity analysis');
-    subplot(1,2,1);
-    for i=1:length(stretch_vec)
-        semilogx(y_sensitivity,u(i,:),'DisplayName',sprintf('Stretch = %.2f',stretch_vec(i)));
-        hold on
-    end
-    xlabel('y [m]','interpreter','latex','fontSize',fSize);    
-    ylabel('$\overline{u}$ [m/s]','interpreter','latex','fontSize',fSize);
-    legend show
-    legend('location','SouthEast')
-    grid on
-    
-    subplot(1,2,2);
-    scatter(stretch_vec,err,'k');
-    xlabel('$\gamma$ [-]','interpreter','latex','fontSize',fSize);
-    ylabel('$\varepsilon$ [-]','interpreter','latex','fontSize',fSize);  
-    grid on
-    
-    set(gcf, 'PaperPosition', [0 0 25 10]);
-    set(gcf, 'PaperSize', [25 10]);
-    print('./figures/mesh_sensitivity','-dpdf');
-end
-
-
-%% Load the MatRANS results file
-
-if generateMatRANS_file
-    stretch_obj = 1.02;
-    [~] = handoutFlowModel(stretch_obj, 1, 0); 
-end
-% Load the results
+%% Load the results file
 load(file_outmatrans);
 
-%% Show the path of some few particles using one-particle-analysis
-
-[Ppaths,~] = multi_particle_walk(MatRANS, Np_showpath, beta_star0, ...
-                    max_Tit, max_T, yplus_bottom, T_comp, ...
-                    random_selection, 1, 0);
-
-%% Calculate the statistical results
+%% Calculate the results
 
 % Define an array with the target number of particles
 Np_vec = logspace(Np_min, Np_max, NumNp);
@@ -183,49 +117,28 @@ if rerun == 1
     end
     % Save the file to avoid rerun unnecessarily
     save('comparison_np_data.mat', 'Xmeans','Xvars');
-
 else % If you don't want to rerun
-
     % Load the existing data to compare
     load('comparison_np_data.mat');
-
 end
 
-%% Compare the values of the maximum number of points to the different
-
-XMeanLast = Xmeans(end);
-XVarLast  = Xvars(end);
-
-RelError_mean = abs(Xmeans - XMeanLast) / XMeanLast;
-RelError_var  = abs(Xvars - XVarLast) / XVarLast;
-RelError      = table(Np_vec', RelError_mean, RelError_var);
-
-table2latex(RelError,'table_relerror_latex');
-
-%% Open figures for plotting the results of the comparison
+% Open figures for plotting the results of the comparison
 
 figure("Name","Comparison of mean values for different Np");
 semilogx(Np_vec, Xmeans,'k-o');
 grid on
 xlabel('Number of particles, $N_{P}$', 'Interpreter','latex')
 ylabel('$\overline{X}$', 'Interpreter','latex')
-title('Comparison of mean values at $T = 10$', ...
+title('\textbf{Comparison of mean values at $T = 10$}', ...
     'Interpreter','latex')
-set(gcf, 'PaperPosition', [0 0 15 10]); 
-set(gcf, 'PaperSize', [15 10]); 
-print('mean_over_np_T10','-dpdf');
-
 
 figure("Name","Comparison of variance for different Np");
 semilogx(Np_vec, Xvars,'k-o')
 grid on
 xlabel('Number of particles, $N_{P}$', 'Interpreter','latex')
-ylabel('$\overline{(X - \overline{X})^{2}}$', 'Interpreter','latex')
-title('Comparison of variance values at $T = 10$', ...
+ylabel('Variance $\overline{(X - \overline{X})^{2}}$', 'Interpreter','latex')
+title('\textbf{Comparison of variance values at $T = 10$}', ...
     'Interpreter','latex')
-set(gcf, 'PaperPosition', [0 0 15 10]); 
-set(gcf, 'PaperSize', [15 10]); 
-print('variance_over_np_T10','-dpdf');
 
 
 
@@ -243,13 +156,12 @@ YP_means = stats.Ymeans;
 YP_vars  = stats.Yvars;
 
 fig_xmean = plot_me_(Tobj, XP_means, 1,'Streamwise mean position of particles', ...
-                    'T', '$\overline{X}$', 'k-');
-
+                    'Time [-]', '$\overline{X}$', 'k-');
 % plot_me_(Tobj, YP_means, 1,'Verticle mean position of particles', ...
-%     'T [-]', '$\overline{Y}$', 'k-'); % Not so interesting to plot 
+%     'Time [-]', '$\overline{Y}$', 'k-'); % Not so interesting to plot 
 
 fig_xvar  = plot_me_(Tobj, XP_vars, 1,'Streamwise position variance of particles', ...
-    'T', '$\overline{(X - \overline{X})^{2}}$', 'k-');
+    'Time [-]', 'Variance $\overline{(X - \overline{X})^{2}}$', 'k-');
 
 % plot_me_(Tobj, YP_vars, 1,'Verticle position variance of particles', ...
 %     'Time [-]', 'Variance $\overline{(Y - \overline{Y})^{2}}$', 'k-');
@@ -269,9 +181,6 @@ hold on
 plot(Tobj,xmean_fit, 'k--');
 legend('$\overline{X}$','$\overline{X}$ fit', 'interpreter', 'latex', ...
     'Location','best')
-set(gcf, 'PaperPosition', [0 0 15 10]); 
-set(gcf, 'PaperSize', [15 10]); 
-print('mean_over_time_n_fit','-dpdf');
 
 % Plot the fit of the variance
 figure(fig_xvar);
@@ -279,9 +188,6 @@ hold on
 plot(Tobj,xvar_fit, 'k--');
 legend('$(X - \overline{X})^{2}$','$(X - \overline{X})^{2}$ fit', ...
     'interpreter', 'latex', 'Location','best')
-set(gcf, 'PaperPosition', [0 0 15 10]); 
-set(gcf, 'PaperSize', [15 10]); 
-print('variance_over_time_n_fit','-dpdf');
 
 % Calculate the longitudinal dispersion coefficient
 D1 = 1 / 2 * p2(1);
