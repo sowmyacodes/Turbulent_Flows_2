@@ -51,7 +51,7 @@ dT = L_nd./vrms_nd;
 Np = 5; % number of particles
 N_it = 5000; %number of iterations for break
 
-NT = 25; %time
+NT = 25; %non-dimensional time limit
 
 P = struct('Xp',[],'Yp',[],'Tp',[]); % structure to save particle tracks
 

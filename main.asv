@@ -22,18 +22,18 @@
 %                                              'multi_particle_walk.m'
 % _________________________________________________________________________
 % Version 4. 14/10/2021
-% · Auto-print figures in pdf
+% · Auto-print figures in pdf and update labels
 % -------------------------------------------------------------------------
 %% FLOW PARAMETERS AND COORDINATES REPRESENTATION
 %
 %  y/\ 
 %   |
 %   |_____________________________________________________________ y_top
-%   |      |------|                            |
+%   |      |----->|                            |
 %   |      |      /                            |
-%   |      |-----/                             |
+%   |      |---->/                             |
 %   |      |    /                              | h
-%   |      |---/                               |
+%   |      |-->/                               |
 %   |      |  /                                |
 %   |      |_/                                 |
 %   |------------------------------------------|------------------ y+
@@ -79,7 +79,7 @@ max_T   = 25;   % Maximum allowed time (non-dimensional)
 Np_min  = 1;   % Exponent of the min 10th power for no of particle analysis
 Np_max  = 5;   % Exponent of the max 10th power for no of particle analysis
 NumNp   = 25;  % Number of different Np for no of particle analysis
-Np      = 2e+3;     % number of particles for standard analysis
+Np      = 680;     % number of particles for standard analysis
 yplus_bottom = 70;  % Non-dimensional height of the bottom limit
 Tobj   = [5 10 15 20 25]; % Target non-dimensional times for the statistical analysis
 T_comp = 10;   % Non-dimensional time to analyse the influence of Np
@@ -142,7 +142,7 @@ XVarLast  = Xvars(end);
 
 RelError_mean = abs(Xmeans - XMeanLast) / XMeanLast;
 RelError_var  = abs(Xvars - XVarLast) / XVarLast;
-RelError = table(Np_vec', RelError_mean, RelError_var);
+RelError      = table(Np_vec', RelError_mean, RelError_var);
 
 table2latex(RelError,'table_relerror_latex');
 
