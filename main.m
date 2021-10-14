@@ -22,7 +22,7 @@
 %                                              'multi_particle_walk.m'
 % _________________________________________________________________________
 % Version 4. 14/10/2021
-% · Auto-print figures in pdf
+% · Auto-print figures in pdf and update labels
 % -------------------------------------------------------------------------
 %% FLOW PARAMETERS AND COORDINATES REPRESENTATION
 %
@@ -187,13 +187,13 @@ YP_means = stats.Ymeans;
 YP_vars  = stats.Yvars;
 
 fig_xmean = plot_me_(Tobj, XP_means, 1,'Streamwise mean position of particles', ...
-                    'Time [-]', '$\overline{X}$', 'k-');
+                    'T', '$\overline{X}$', 'k-');
 
 % plot_me_(Tobj, YP_means, 1,'Verticle mean position of particles', ...
-%     'Time [-]', '$\overline{Y}$', 'k-'); % Not so interesting to plot 
+%     'T [-]', '$\overline{Y}$', 'k-'); % Not so interesting to plot 
 
 fig_xvar  = plot_me_(Tobj, XP_vars, 1,'Streamwise position variance of particles', ...
-    'Time [-]', '$\overline{(X - \overline{X})^{2}}$', 'k-');
+    'T', '$\overline{(X - \overline{X})^{2}}$', 'k-');
 
 % plot_me_(Tobj, YP_vars, 1,'Verticle position variance of particles', ...
 %     'Time [-]', 'Variance $\overline{(Y - \overline{Y})^{2}}$', 'k-');
