@@ -249,12 +249,11 @@ function [P, stats] = multi_particle_walk(MatRANS, Np, beta_star0, ...
         figure(50)
         grid on
         xlabel('$X$ [-]','Interpreter','latex')
-        ylabel('$Y$ [-]', 'Interpreter','latex')
+        ylabel('$y/h$', 'Interpreter','latex')
         title(['Particles path for $N_{P} = $ ', num2str(Np)], ...
             'Interpreter','latex')
         figure_name_path = join('particles_path_',num2str(Np));
-        set(gcf, 'PaperPosition', [-2.5 0 30 10]); 
-        set(gcf, 'PaperSize', [25 10]); 
+        set(gca)
         print(figure_name_path, '-dpdf')
     end
 
@@ -262,13 +261,10 @@ function [P, stats] = multi_particle_walk(MatRANS, Np, beta_star0, ...
         figure(51)
         grid on
         xlabel('$X$ [-]','Interpreter','latex')
-        ylabel('$Y$ [-]', 'Interpreter','latex')
+        ylabel('$y/h$', 'Interpreter','latex')
         title(['Particles dispersant cloud for $N_{P} = $ ', num2str(Np)],...
             'Interpreter','latex')
         figure_name_cloud = join('particles_cloud_',num2str(Np));
         print(figure_name_cloud, '-dpdf')
-        set(gcf, 'PaperPosition', [0 0 15 20]); 
-        set(gcf, 'PaperSize', [15 20]); 
-        print(figure_name_path, '-dpdf')
     end
 end
