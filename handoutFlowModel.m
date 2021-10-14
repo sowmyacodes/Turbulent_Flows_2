@@ -156,7 +156,7 @@ istats = 'on'; % Display computational stats after simulation: on | {off}
 
 % Output control during simulation
 noutput = 200; % Displays time after every noutput RHS evaluations
-ioutplot = 1; % Show plots, 0: No, 1: Yes
+%ioutplot = 1; % Show plots, 0: No, 1: Yes
 
 % Execute simulation script
 k_N = k_s; % Set internal model roughness variable
