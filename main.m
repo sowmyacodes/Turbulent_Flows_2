@@ -131,14 +131,21 @@ xlabel('Number of particles, $N_{P}$', 'Interpreter','latex')
 ylabel('$\overline{X}$', 'Interpreter','latex')
 title('\textbf{Comparison of mean values at $T = 10$}', ...
     'Interpreter','latex')
+set(gcf, 'PaperPosition', [0 0 15 10]); 
+set(gcf, 'PaperSize', [15 10]); 
+print('mean_over_np_T10','-dpdf');
+
 
 figure("Name","Comparison of variance for different Np");
 semilogx(Np_vec, Xvars,'k-o')
 grid on
 xlabel('Number of particles, $N_{P}$', 'Interpreter','latex')
-ylabel('Variance $\overline{(X - \overline{X})^{2}}$', 'Interpreter','latex')
+ylabel('$\overline{(X - \overline{X})^{2}}$', 'Interpreter','latex')
 title('\textbf{Comparison of variance values at $T = 10$}', ...
     'Interpreter','latex')
+set(gcf, 'PaperPosition', [0 0 15 10]); 
+set(gcf, 'PaperSize', [15 10]); 
+print('pseudovariance_over_np_T10','-dpdf');
 
 
 
@@ -157,11 +164,12 @@ YP_vars  = stats.Yvars;
 
 fig_xmean = plot_me_(Tobj, XP_means, 1,'Streamwise mean position of particles', ...
                     'Time [-]', '$\overline{X}$', 'k-');
+
 % plot_me_(Tobj, YP_means, 1,'Verticle mean position of particles', ...
 %     'Time [-]', '$\overline{Y}$', 'k-'); % Not so interesting to plot 
 
 fig_xvar  = plot_me_(Tobj, XP_vars, 1,'Streamwise position variance of particles', ...
-    'Time [-]', 'Variance $\overline{(X - \overline{X})^{2}}$', 'k-');
+    'Time [-]', '$\overline{(X - \overline{X})^{2}}$', 'k-');
 
 % plot_me_(Tobj, YP_vars, 1,'Verticle position variance of particles', ...
 %     'Time [-]', 'Variance $\overline{(Y - \overline{Y})^{2}}$', 'k-');
@@ -181,6 +189,9 @@ hold on
 plot(Tobj,xmean_fit, 'k--');
 legend('$\overline{X}$','$\overline{X}$ fit', 'interpreter', 'latex', ...
     'Location','best')
+set(gcf, 'PaperPosition', [0 0 15 10]); 
+set(gcf, 'PaperSize', [15 10]); 
+print('mean_over_time_n_fit','-dpdf');
 
 % Plot the fit of the variance
 figure(fig_xvar);
@@ -188,6 +199,9 @@ hold on
 plot(Tobj,xvar_fit, 'k--');
 legend('$(X - \overline{X})^{2}$','$(X - \overline{X})^{2}$ fit', ...
     'interpreter', 'latex', 'Location','best')
+set(gcf, 'PaperPosition', [0 0 15 10]); 
+set(gcf, 'PaperSize', [15 10]); 
+print('variance_over_time_n_fit','-dpdf');
 
 % Calculate the longitudinal dispersion coefficient
 D1 = 1 / 2 * p2(1);
