@@ -87,6 +87,9 @@ T_comp = 10;   % Non-dimensional time to analyse the influence of Np
 plot_trajectories = 0;     % Flag for plotting trajectories
 plot_dispersant_cloud = 0; % Flag for plotting the dispersant cloud at maxT
 fSize = 14; % Font size for the labels
+if ~exist('./figures','dir')
+    mkdir figures
+end
 % File comparison Np data and re-run
 file_comparison_np = 'comparison_np_data.mat';
 rerun = 0;
@@ -95,12 +98,15 @@ doSensitivityAnalysis = 1;
 generateMatRANS_file  = 1;
 
 %% Mesh sensitivity analysis with MatRANS
+doISave = 0; % save velocity profiles, 0:no, 1:yes
+doIPlot = 0; % Show internal plots of MatRANS, 0: No, 1: Yes
 
+global ioutplot
+ioutplot = doIPlot; 
 if doSensitivityAnalysis
     stretch_vec = fliplr([1.1 1.08 1.06 1.04 1.02 1.01]);
-    for i = 2:length(stretch_vec) 
-        doISave = 1;
-        doIPlot = 1;
+    for i = 1:length(stretch_vec) 
+
         stretch = stretch_vec(i);
         MatRANS = handoutFlowModel(stretch,doISave,doIPlot);
         if ~exist('y_sensitivity','var')
@@ -120,6 +126,7 @@ if doSensitivityAnalysis
     xlabel('y [m]','interpreter','latex','fontSize',fSize);    
     ylabel('$\overline{u}$ [m/s]','interpreter','latex','fontSize',fSize);
     legend show
+    legend('location','SouthEast')
     grid on
     
     subplot(1,2,2);
@@ -130,7 +137,7 @@ if doSensitivityAnalysis
     
     set(gcf, 'PaperPosition', [0 0 25 10]);
     set(gcf, 'PaperSize', [25 10]);
-    print('mesh_sensitivity','-dpdf');
+    print('./figures/mesh_sensitivity','-dpdf');
 end
 
 
