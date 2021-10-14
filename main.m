@@ -20,6 +20,9 @@
 % · Correct error in DY formula
 % · Gather one-particle-analysis in an external function:
 %                                              'multi_particle_walk.m'
+% _________________________________________________________________________
+% Version 4. 14/10/2021
+% · Auto-print figures in pdf and update labels
 % -------------------------------------------------------------------------
 %% FLOW PARAMETERS AND COORDINATES REPRESENTATION
 %
@@ -76,19 +79,60 @@ max_T   = 25;   % Maximum allowed time (non-dimensional)
 Np_min  = 1;   % Exponent of the min 10th power for no of particle analysis
 Np_max  = 5;   % Exponent of the max 10th power for no of particle analysis
 NumNp   = 25;  % Number of different Np for no of particle analysis
-Np      = 2e+3;     % number of particles for standard analysis
+Np      = 680;     % number of particles for standard analysis
 yplus_bottom = 70;  % Non-dimensional height of the bottom limit
 Tobj   = [5 10 15 20 25]; % Target non-dimensional times for the statistical analysis
 T_comp = 10;   % Non-dimensional time to analyse the influence of Np
 % Plotting
-plot_trajectories = 0; % Flag for plotting trajectories
+plot_trajectories = 0;     % Flag for plotting trajectories
 plot_dispersant_cloud = 0; % Flag for plotting the dispersant cloud at maxT
 % File comparison Np data and re-run
 file_comparison_np = 'comparison_np_data.mat';
 rerun = 0;
+Np_showpath = 5; % Exponent of the number of particles to show the path
+
+%% Mesh sensitivity analysis
+doSensitivityAnalysis = 0;
+if doSensitivityAnalysis
+    stretch_vec = fliplr([1.1 1.08 1.06 1.04 1.02 1.01]);
+    for i = 2:length(stretch_vec) 
+        doISave = 0;
+        doIPlot = 0;
+        stretch = stretch_vec(i);
+        MatRANS = handoutFlowModel(stretch,doISave,doIPlot);
+        if ~exist('y_sensitivity','var')
+            y_sensitivity = MatRANS.y;
+            u(i,:) = MatRANS.u(end,:);
+        else
+            u(i,:) = interp1(MatRANS.y,MatRANS.u(end,:),y_sensitivity);
+            err(i) = max(abs( (u(i,:)-u(1,:))./u(1,:) ));
+        end
+    end
+    figure('Name','Mesh sensitivity analysis');
+    subplot(1,2,1);
+    for i=1:length(stretch_vec)
+        semilogx(y_sensitivity,u(i,:),'DisplayName',sprintf('Stretch = %.2f',stretch_vec(i)));
+        hold on
+    end
+    xlabel('y [m]','interpreter','latex','fontSize',fSize);    
+    ylabel('$\overline{u}$ [m/s]','interpreter','latex','fontSize',fSize);
+    legend show
+    
+    subplot(1,2,2);
+    scatter(stretch_vec,err,'k');
+    xlabel('Stretch [-]','interpreter','latex','fontSize',fSize);
+    ylabel('Relative error [-]','interpreter','latex','fontSize',fSize);    
+end
+
 
 %% Load the results file
 load(file_outmatrans);
+
+%% Show the path of some few particles 
+
+[Ppaths,~] = multi_particle_walk(MatRANS, Np_showpath, beta_star0, ...
+                    max_Tit, max_T, yplus_bottom, T_comp, ...
+                    random_selection, 1, 0);
 
 %% Calculate the results
 
@@ -117,12 +161,26 @@ if rerun == 1
     end
     % Save the file to avoid rerun unnecessarily
     save('comparison_np_data.mat', 'Xmeans','Xvars');
+
 else % If you don't want to rerun
+
     % Load the existing data to compare
     load('comparison_np_data.mat');
+
 end
 
-% Open figures for plotting the results of the comparison
+%% Compare the values of the maximum number of points to the different
+
+XMeanLast = Xmeans(end);
+XVarLast  = Xvars(end);
+
+RelError_mean = abs(Xmeans - XMeanLast) / XMeanLast;
+RelError_var  = abs(Xvars - XVarLast) / XVarLast;
+RelError      = table(Np_vec', RelError_mean, RelError_var);
+
+table2latex(RelError,'table_relerror_latex');
+
+%% Open figures for plotting the results of the comparison
 
 figure("Name","Comparison of mean values for different Np");
 semilogx(Np_vec, Xmeans,'k-o');
@@ -163,13 +221,13 @@ YP_means = stats.Ymeans;
 YP_vars  = stats.Yvars;
 
 fig_xmean = plot_me_(Tobj, XP_means, 1,'Streamwise mean position of particles', ...
-                    'Time [-]', '$\overline{X}$', 'k-');
+                    'T', '$\overline{X}$', 'k-');
 
 % plot_me_(Tobj, YP_means, 1,'Verticle mean position of particles', ...
-%     'Time [-]', '$\overline{Y}$', 'k-'); % Not so interesting to plot 
+%     'T [-]', '$\overline{Y}$', 'k-'); % Not so interesting to plot 
 
 fig_xvar  = plot_me_(Tobj, XP_vars, 1,'Streamwise position variance of particles', ...
-    'Time [-]', '$\overline{(X - \overline{X})^{2}}$', 'k-');
+    'T', '$\overline{(X - \overline{X})^{2}}$', 'k-');
 
 % plot_me_(Tobj, YP_vars, 1,'Verticle position variance of particles', ...
 %     'Time [-]', 'Variance $\overline{(Y - \overline{Y})^{2}}$', 'k-');

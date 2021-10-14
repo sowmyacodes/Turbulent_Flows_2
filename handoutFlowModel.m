@@ -1,7 +1,11 @@
+function [MatRANS] = handoutFlowModel(stretch,doISave,doIPlot)
+if nargin <= 1
+    stretch=1.02;
+    doISave = 1;
+    doIPlot = 1;
+end
 % Input file for MatRANS simulation
 
-% Clear workspace, figures, and command line
-clear all; close all; clc;
 addpath ./MatRANS/src; % Points to MatRANS source code
 GlobalVars; % Declare global variables
 
@@ -24,7 +28,7 @@ OutFileName = 'out_MatRANS.mat';
 h_m = 0.07; % Height of model depth (m)
 Uf = 0.0135; % Friction velocity (m/s)
 dy0 = 1*nu/Uf; % Near-wall grid size (m)
-stretch = 1.02; y = [0]; ycount = 1; dy=dy0;
+y = [0]; ycount = 1; dy=dy0;
 while y(end) <= h_m
   ycount = ycount + 1; % Update counter
   y(ycount) = y(ycount-1) + dy0*stretch.^(ycount-2);  
@@ -58,7 +62,7 @@ Px = -Uf^2/h_m; % For pure current, this will equal -Uf^2/h_m at steady state
 % Time input
 dt = 30; % Output time interval (s)
 t1 = dt; % First time (after t=0) where the output should be saved (s)
-t2 = 1800; % End time (s)
+t2 = 600; % End time (s)
 t_span = [0:dt:t2]; % Vector of time levels where output will be saved (s)
 
 % Sediment input
@@ -117,7 +121,7 @@ filt_C = 0; % Filter on dc/dt
 
 % Move grid point nearest reference level to y=b
 ib = find(abs(y-b) == min(abs(y-b))); % Index nearest y=b
-if susp == 1; % Only do if a suspended sediment calculation is made
+if susp == 1 % Only do if a suspended sediment calculation is made
     y(ib) = b; % Replace nearest grid point value with reference level y=b
 end
 yc = y(ib:end); % y vector for c equation
@@ -167,15 +171,44 @@ MatRANS.tau0 = tau_b;
 MatRANS.Uf = sqrt(tau_b/rho);
 MatRANS.nu = nu; MatRANS.rho = rho; MatRANS.k_s = k_s;
 MatRANS.h_m = h_m; MatRANS.T = []; MatRANS.U0m = [];
-save(OutFileName,'MatRANS'); % Save to output file
-disp(''); disp(['Model results are exported to: ' OutFileName])
-
+if doISave
+    save(OutFileName,'MatRANS'); % Save to output file
+    disp(''); disp(['Model results are exported to: ' OutFileName])
+end
 %% Plot end results
-Uf = sqrt(MatRANS.tau0(end)/MatRANS.rho); % Friction velocity (m/s)
-figure; 
-subplot(1,2,1); plot(MatRANS.u(end,:)/Uf,MatRANS.y/MatRANS.h_m,'k'); 
-title('Steady State Velocity Profile','Interpreter','Latex');
-xlabel('$u/U_f$','Interpreter','Latex'); ylabel('y/h','Interpreter','Latex'); % Velocity profile
-subplot(1,2,2); plot(MatRANS.k(end,:)/Uf^2,MatRANS.y/MatRANS.h_m,'k'); 
-title('Turbulent Kinetic Energy','Interpreter','Latex');
-xlabel('$k/U_f^2$','Interpreter','Latex'); ylabel('y/h','Interpreter','Latex');% Turbulent kinetic energy density profile
+if doIPlot
+    fSize = 14; %Font size
+    Uf = sqrt(MatRANS.tau0(end)/MatRANS.rho); % Friction velocity (m/s)
+    on_off_plot = 0;
+    [yh_1, uUf_1, k_1] = assignment1(on_off_plot); % load results from 1st assignment
+
+    figure; 
+
+    sgtitle('MatRANS end results and measurements','interpreter','latex','fontSize',fSize);
+    subplot(1,2,1); 
+    plot(MatRANS.u(end,:)/Uf,MatRANS.y/MatRANS.h_m,'k','DisplayName','Flow model'); 
+    hold on
+    plot(uUf_1,yh_1,'ko','DisplayName','Measurements'); % 1st assignment results
+    xlabel('$u/U_f$','interpreter','latex','fontSize',fSize);
+    ylabel('$y/h$','interpreter','latex','fontSize',fSize);
+
+    [hleg1, hobj1] = legend('Interpreter','latex','Location','NorthWest');
+    textobj = findobj(hobj1, 'type', 'text');
+    set(textobj, 'Interpreter', 'latex', 'fontsize', fSize);
+    legend boxoff
+    grid on
+    
+    subplot(1,2,2); 
+    plot(MatRANS.k(end,:)/Uf^2,MatRANS.y/MatRANS.h_m,'k','DisplayName','Flow model');
+    hold on
+    plot(k_1,yh_1,'ko','DisplayName','Measurments'); % 1st assignment results
+    xlabel('$k/U_{f}^2$','interpreter','latex','fontSize',fSize); % Turbulent kinetic energy density profile
+    grid on
+    
+    set(gcf, 'PaperPosition', [0 0 25 10]); 
+    set(gcf, 'PaperSize', [25 10]); 
+    print('figures/item_1','-dpdf');
+    % [hleg1, hobj1] = legend('Interpreter','latex','Location','NorthWest');
+    % textobj = findobj(hobj1, 'type', 'text');
+    % set(textobj, 'Interpreter', 'latex', 'fontsize', fSize);
+end
