@@ -91,16 +91,16 @@ fSize = 14; % Font size for the labels
 file_comparison_np = 'comparison_np_data.mat';
 rerun = 0;
 Np_showpath = 5; % Exponent of the number of particles to show the path
-doSensitivityAnalysis = 0;
-generateMatRANS_file  = 0;
+doSensitivityAnalysis = 1;
+generateMatRANS_file  = 1;
 
 %% Mesh sensitivity analysis with MatRANS
 
 if doSensitivityAnalysis
     stretch_vec = fliplr([1.1 1.08 1.06 1.04 1.02 1.01]);
     for i = 2:length(stretch_vec) 
-        doISave = 0;
-        doIPlot = 0;
+        doISave = 1;
+        doIPlot = 1;
         stretch = stretch_vec(i);
         MatRANS = handoutFlowModel(stretch,doISave,doIPlot);
         if ~exist('y_sensitivity','var')
@@ -120,11 +120,17 @@ if doSensitivityAnalysis
     xlabel('y [m]','interpreter','latex','fontSize',fSize);    
     ylabel('$\overline{u}$ [m/s]','interpreter','latex','fontSize',fSize);
     legend show
+    grid on
     
     subplot(1,2,2);
     scatter(stretch_vec,err,'k');
-    xlabel('Stretch [-]','interpreter','latex','fontSize',fSize);
-    ylabel('Relative error [-]','interpreter','latex','fontSize',fSize);    
+    xlabel('$\gamma$ [-]','interpreter','latex','fontSize',fSize);
+    ylabel('$\varepsilon$ [-]','interpreter','latex','fontSize',fSize);  
+    grid on
+    
+    set(gcf, 'PaperPosition', [0 0 25 10]);
+    set(gcf, 'PaperSize', [25 10]);
+    print('mesh_sensitivity','-dpdf');
 end
 
 
