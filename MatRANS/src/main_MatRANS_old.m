@@ -11,7 +11,7 @@
 %
 % Programmed by: 
 % David R. Fuhrman
-% Signe Schløer 
+% Signe SchlÃ¸er 
 % Johanna Sterner 
 % Ugur Caliskan
 %##############################################################################
