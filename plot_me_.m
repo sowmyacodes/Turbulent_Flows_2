@@ -30,27 +30,27 @@ function handle = plot_me_(x, y, nplots, st_title, ...
     % *********************************************************************
     
     if nplots < 1
-        disp('Error calling plot_me_, not enough number of data')
+        disp('Error calling plot_me_, not enough number of data');
         handle = - 1;
         return
     elseif nplots == 1
         handle = figure('Name', st_title);
-        plot(x,y, st_linespec)
+        plot(x,y, st_linespec);
         grid on
-        xlabel(st_xlabel, 'Interpreter','latex')
-        ylabel(st_ylabel, 'Interpreter','latex')
-        title(st_title, 'Interpreter','latex')
+        xlabel(st_xlabel, 'Interpreter','latex');
+        ylabel(st_ylabel, 'Interpreter','latex');
+        title(st_title, 'Interpreter','latex');
     else
         handle = figure("Name",st_title);
-        plot(x(1,:), y(1,:), st_linespec(1))
+        plot(x(1,:), y(1,:), st_linespec(1));
         hold on
         for ii = 2:size(x,1)
-            plot(x(ii,:), y(ii,:), st_linespec(ii))
+            plot(x(ii,:), y(ii,:), st_linespec(ii));
         end
         grid on
-        xlabel(st_xlabel, 'Interpreter','latex')
-        ylabel(st_ylabel, 'Interpreter','latex')
-        title(st_title, 'Interpreter','latex')
+        xlabel(st_xlabel, 'Interpreter','latex');
+        ylabel(st_ylabel, 'Interpreter','latex');
+        title(st_title, 'Interpreter','latex');
     end
 
 end
