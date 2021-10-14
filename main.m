@@ -86,6 +86,7 @@ T_comp = 10;   % Non-dimensional time to analyse the influence of Np
 % Plotting
 plot_trajectories = 0;     % Flag for plotting trajectories
 plot_dispersant_cloud = 0; % Flag for plotting the dispersant cloud at maxT
+fSize = 14; % Font size for the labels
 % File comparison Np data and re-run
 file_comparison_np = 'comparison_np_data.mat';
 rerun = 0;
@@ -126,6 +127,8 @@ end
 
 
 %% Load the results file
+stretch_obj = 1.02;
+[~] = handoutFlowModel(stretch_obj, 1, 0);
 load(file_outmatrans);
 
 %% Show the path of some few particles 
