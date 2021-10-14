@@ -87,6 +87,40 @@ plot_dispersant_cloud = 0; % Flag for plotting the dispersant cloud at maxT
 file_comparison_np = 'comparison_np_data.mat';
 rerun = 0;
 
+%% Mesh sensitivity analysis
+doSensitivityAnalysis = 0;
+if doSensitivityAnalysis
+    stretch_vec = fliplr([1.1 1.08 1.06 1.04 1.02 1.01]);
+    for i = 2:length(stretch_vec) 
+        doISave = 0;
+        doIPlot = 0;
+        stretch = stretch_vec(i);
+        MatRANS = handoutFlowModel(stretch,doISave,doIPlot);
+        if ~exist('y_sensitivity','var')
+            y_sensitivity = MatRANS.y;
+            u(i,:) = MatRANS.u(end,:);
+        else
+            u(i,:) = interp1(MatRANS.y,MatRANS.u(end,:),y_sensitivity);
+            err(i) = max(abs( (u(i,:)-u(1,:))./u(1,:) ));
+        end
+    end
+    figure('Name','Mesh sensitivity analysis');
+    subplot(1,2,1);
+    for i=1:length(stretch_vec)
+        semilogx(y_sensitivity,u(i,:),'DisplayName',sprintf('Stretch = %.2f',stretch_vec(i)));
+        hold on
+    end
+    xlabel('y [m]','interpreter','latex','fontSize',fSize);    
+    ylabel('$\overline{u}$ [m/s]','interpreter','latex','fontSize',fSize);
+    legend show
+    
+    subplot(1,2,2);
+    scatter(stretch_vec,err,'k');
+    xlabel('Stretch [-]','interpreter','latex','fontSize',fSize);
+    ylabel('Relative error [-]','interpreter','latex','fontSize',fSize);    
+end
+
+
 %% Load the results file
 load(file_outmatrans);
 
